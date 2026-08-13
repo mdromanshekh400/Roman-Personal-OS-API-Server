@@ -1,6 +1,10 @@
+
+ HEAD
 # Roman Personal OS — API Server
 
 This package adds the server that the Android Companion needs.
+
+
 
 ## What it does
 
@@ -14,6 +18,23 @@ This package adds the server that the Android Companion needs.
 The website already requests `/api/device`, so serving the website from this same server keeps the browser API URL same-origin.
 
 ## 1. Install Node.js
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 Use Node.js 18+.
 
@@ -115,3 +136,6 @@ Then grant the requested Android permissions and tap **Connect & Sync**.
 ## Important
 
 This API can receive sensitive device information such as notifications, call logs and SMS metadata/content if the companion sends them. Keep the server on a trusted network and use a strong token before exposing it beyond your local network.
+
+# Roman-Personal-OS-API-Server
+ 4d61d541dd959e9709fc5ea6b0f06092953e8d80
