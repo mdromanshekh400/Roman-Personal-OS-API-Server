@@ -1,0 +1,102 @@
+{
+  "device": "RMX3085",
+  "android": "13",
+  "sdk": 33,
+  "battery": 44,
+  "location": null,
+  "usageAccess": false,
+  "notifications": [],
+  "calls": [
+    {
+      "number": "01338325846",
+      "type": 2,
+      "time": 1786588570932,
+      "duration": 0
+    },
+    {
+      "number": "+8801893233758",
+      "type": 1,
+      "time": 1786526107050,
+      "duration": 70
+    },
+    {
+      "number": "+8801893233758",
+      "type": 3,
+      "time": 1786526054625,
+      "duration": 0
+    },
+    {
+      "number": "+8801893233758",
+      "type": 3,
+      "time": 1786526012464,
+      "duration": 0
+    },
+    {
+      "number": "+8801622920131",
+      "type": 3,
+      "time": 1786523899211,
+      "duration": 0
+    },
+    {
+      "number": "+8801954053505",
+      "type": 1,
+      "time": 1786509355764,
+      "duration": 14
+    },
+    {
+      "number": "+8801343592635",
+      "type": 2,
+      "time": 1786504428749,
+      "duration": 18
+    },
+    {
+      "number": "+8801870177265",
+      "type": 2,
+      "time": 1786444580629,
+      "duration": 28
+    }
+  ],
+  "sms": [
+    {
+      "address": "GP  ",
+      "body": "আপনি   ইন্টারনেট উপভোগ করছেন ৷",
+      "time": 1786561939084
+    },
+    {
+      "address": "GP  ",
+      "body": "আপনি   ইন্টারনেট উপভোগ করছেন ৷",
+      "time": 1786561421419
+    },
+    {
+      "address": "RYZE",
+      "body": "হেই!  ১ জিবি, ৩ দিন মেয়াদ - ৮,৩৯,০০০ কয়েন প্যাক 14/08/2026 23:59:59 তারিখে শেষ হয়ে যাবে। আরও মজার প্যাক দেখতে চলে যাও https://ryze.live/plans এ! \n",
+      "time": 1786559846535
+    },
+    {
+      "address": "Ryze Club",
+      "body": "Dear Customer, you have received 1GB 3Days, your remaining Coin balance is 93173 . To know more, visit Ryze App (https://ryze.live/lms)",
+      "time": 1786552543205
+    },
+    {
+      "address": "RYZE",
+      "body": "১ জিবি, ৩ দিন মেয়াদ - ৮,৩৯,০০০ কয়েন প্যাকটি এখন চালু হয়েছে। মেয়াদ: 14/08/2026 23:59:59 পর্যন্ত। ব্যালেন্স চেক ও প্যাক ম্যানেজ করতে রাইয অ্যাপে যান: https://ryze.live/myplan/main-package. \n",
+      "time": 1786552523040
+    },
+    {
+      "address": "RYZE Usage",
+      "body": "জুলাই-২০২৬ খরচের বিবরণ\n\nমোট রিচার্জ:90.00 টাকা\n\nমোট খরচ:\nভয়েস:75.46 টাকা\nইন্টারনেট:7.00 টাকা\nঅন্যান্য:0.00 টাকা",
+      "time": 1786362171426
+    },
+    {
+      "address": "RYZE",
+      "body": "আপনার RYZE সিমটির ইমার্জেন্সি ব্যালেন্সের পরিমাণ পরিবর্তিত হয়েছে। নতুন ইমার্জেন্সি ব্যালেন্স জানতে ভিজিট: https://ryze.live\n",
+      "time": 1786305512226
+    },
+    {
+      "address": "16216",
+      "body": "Dear Sir, your A/C ***1417 debited (Fund Transfer) by Tk10.00 on 09-08-2026 05:37:41 PM C/B Tk545.97. NexusPay https://bit.ly/nexuspay",
+      "time": 1786275466408
+    }
+  ],
+  "timestamp": 1786617929559
+}

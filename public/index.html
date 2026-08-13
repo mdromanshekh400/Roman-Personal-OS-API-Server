@@ -1,0 +1,654 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#07091a">
+<title>Roman Personal OS</title>
+<style>
+:root{
+ --bg:#060817;--bg2:#0a0d20;--panel:#0f1429;--panel2:#131a34;--panel3:#181f3c;
+ --text:#f7f8ff;--muted:#8d94b0;--muted2:#68708f;--line:rgba(255,255,255,.08);
+ --accent:#7957ff;--accent2:#2d8dff;--good:#34d399;--warn:#fbbf24;--danger:#ff5d78;
+ --shadow:0 18px 55px rgba(0,0,0,.34);--radius:20px
+}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;min-height:100vh;color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:radial-gradient(circle at 75% 0%,rgba(112,67,255,.18),transparent 28%),radial-gradient(circle at 0% 75%,rgba(0,143,255,.10),transparent 28%),linear-gradient(180deg,var(--bg),#050714 70%);font-size:14px}button,input,textarea,select{font:inherit}button{cursor:pointer}a{color:inherit;text-decoration:none}
+body.light{--bg:#f3f6fc;--bg2:#fff;--panel:#fff;--panel2:#f6f8fd;--panel3:#edf1fa;--text:#111522;--muted:#68728b;--muted2:#8992a8;--line:rgba(15,25,45,.11);background:linear-gradient(180deg,#f6f8fd,#eef2fa)}
+.app{min-height:100vh;display:flex}.sidebar{position:fixed;z-index:80;left:0;top:0;bottom:0;width:250px;padding:18px 14px;background:rgba(7,10,25,.86);border-right:1px solid var(--line);backdrop-filter:blur(22px);display:flex;flex-direction:column}body.light .sidebar{background:rgba(255,255,255,.88)}
+.brand{display:flex;align-items:center;gap:11px;padding:3px 8px 23px}.brandmark{width:42px;height:42px;display:grid;place-items:center;border-radius:14px;background:linear-gradient(135deg,var(--accent2),var(--accent));box-shadow:0 10px 34px rgba(92,69,255,.35);font-weight:900;font-size:19px}.brand strong{font-size:16px;letter-spacing:-.2px}.brand small{display:block;color:var(--muted);font-size:10px;margin-top:2px}
+.nav{display:grid;gap:5px}.nav button{display:flex;align-items:center;gap:11px;border:1px solid transparent;background:transparent;color:#8e95af;text-align:left;padding:11px 12px;border-radius:13px;transition:.18s}.nav button:hover,.nav button.active{color:var(--text);background:linear-gradient(90deg,rgba(121,87,255,.20),rgba(45,141,255,.05));border-color:rgba(121,87,255,.15)}.nav i{width:21px;text-align:center;font-style:normal;font-size:16px}.nav .group{margin:13px 10px 3px;color:var(--muted2);font-size:9px;text-transform:uppercase;letter-spacing:1.4px}
+.sidebar-bottom{margin-top:auto;border-top:1px solid var(--line);padding-top:12px;display:grid;gap:8px}.user{display:flex;align-items:center;gap:9px;padding:8px}.avatar{width:31px;height:31px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#ffbe70,#8168ff);font-size:12px;font-weight:900}.user small{display:block;color:var(--muted);font-size:9px}.online{margin-left:auto;width:7px;height:7px;border-radius:50%;background:var(--good);box-shadow:0 0 12px rgba(52,211,153,.7)}
+.main{width:calc(100% - 250px);margin-left:250px;padding:0 28px 86px}.topbar{position:sticky;top:0;z-index:60;height:74px;display:flex;align-items:center;gap:10px;background:linear-gradient(var(--bg) 68%,transparent);backdrop-filter:blur(3px)}.search{flex:1;max-width:620px;position:relative}.search input{width:100%;height:43px;border:1px solid var(--line);border-radius:13px;background:rgba(15,20,42,.76);color:var(--text);padding:0 90px 0 42px;outline:none}.light .search input{background:#fff}.search .mag{position:absolute;left:14px;top:10px;color:var(--muted);font-size:18px}.shortcut{position:absolute;right:9px;top:8px;padding:5px 7px;border-radius:7px;border:1px solid var(--line);color:var(--muted);font-size:9px}.top-spacer{flex:1}.iconbtn,.ghost{border:1px solid var(--line);background:rgba(255,255,255,.035);color:var(--text);border-radius:12px;padding:10px 12px}.primary{border:0;color:#fff;border-radius:12px;padding:11px 15px;background:linear-gradient(135deg,var(--accent2),var(--accent));box-shadow:0 10px 28px rgba(83,70,255,.22)}
+.page{display:none}.page.active{display:block}.hero{display:grid;grid-template-columns:1fr auto;gap:20px;align-items:end;padding:26px 0 20px}.eyebrow{display:inline-flex;align-items:center;gap:7px;color:#82baff;background:rgba(45,141,255,.08);border:1px solid rgba(45,141,255,.15);padding:7px 10px;border-radius:99px;font-size:9px;font-weight:800;letter-spacing:1.2px}.hero h1{font-size:clamp(31px,4.2vw,50px);letter-spacing:-2px;line-height:1.05;margin:15px 0 10px}.gradient{background:linear-gradient(90deg,#fff,#bfa9ff,#70c1ff);-webkit-background-clip:text;background-clip:text;color:transparent}.hero p{max-width:720px;color:var(--muted);line-height:1.75;margin:0}.clock{text-align:right;color:var(--muted);min-width:180px}.clock strong{display:block;color:var(--text);font-size:26px}.clock span{font-size:11px}
+.stats{display:grid;grid-template-columns:repeat(6,1fr);gap:11px}.stat,.card{background:linear-gradient(180deg,rgba(19,25,52,.92),rgba(10,14,31,.94));border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}body.light .stat,body.light .card{background:rgba(255,255,255,.92)}.stat{padding:14px;min-height:104px}.stathead{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:10px}.stat .icon{width:29px;height:29px;display:grid;place-items:center;border-radius:9px;background:rgba(121,87,255,.13)}.stat .num{font-size:26px;font-weight:850;margin-top:8px}.stat .label{font-size:10px;color:var(--muted2)}
+.section{margin-top:26px}.section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}.section-head h2{margin:0;font-size:19px;letter-spacing:-.4px}.section-head p,.section-head small{margin:3px 0 0;color:var(--muted);font-size:11px}.actions{display:flex;gap:7px;flex-wrap:wrap}.grid2{display:grid;grid-template-columns:1.35fr 1fr;gap:13px}.grid3{display:grid;grid-template-columns:1.15fr 1fr .8fr;gap:13px}.card{padding:18px}.card-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.card-title h3{margin:0;font-size:14px}.view{font-size:10px;color:#8eb9ff;cursor:pointer}
+.focus{display:grid;grid-template-columns:1.1fr .9fr;gap:13px}.focus-card{padding:20px;border-radius:var(--radius);border:1px solid rgba(121,87,255,.18);background:radial-gradient(circle at 90% 0%,rgba(121,87,255,.22),transparent 38%),linear-gradient(135deg,rgba(28,32,68,.96),rgba(10,14,31,.96));box-shadow:var(--shadow)}.focus-card h3{font-size:18px;margin:0 0 6px}.focus-card p{color:var(--muted);line-height:1.65;margin:0 0 15px}.focus-buttons{display:flex;gap:8px;flex-wrap:wrap}.focus-buttons button{font-size:11px}.mini-list{display:grid;gap:4px}.mini-row{display:flex;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.055)}.mini-row:last-child{border-bottom:0}.dot{width:7px;height:7px;border-radius:50%;background:#9d72ff;box-shadow:0 0 12px rgba(157,114,255,.45);flex:none}.mini-row strong{display:block;font-size:12px}.mini-row small{display:block;color:var(--muted2);font-size:10px;margin-top:2px}.empty{padding:27px 15px;text-align:center;border:1px dashed var(--line);border-radius:15px;color:var(--muted);font-size:11px}.quick-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.quick-grid button{border:1px solid var(--line);background:rgba(255,255,255,.025);color:var(--text);border-radius:12px;padding:12px 9px;font-size:10px}.quick-grid b{display:block;font-size:18px;margin-bottom:5px}
+.chart{height:190px;display:flex;align-items:end;gap:7px;padding:25px 4px 8px}.bar{flex:1;min-height:12px;border-radius:7px 7px 2px 2px;background:linear-gradient(180deg,#9755ff,#277fdc);opacity:.88}.legend{display:flex;justify-content:space-between;color:var(--muted2);font-size:9px;margin-top:-1px}.progress{height:7px;border-radius:99px;background:#080b17;overflow:hidden;margin-top:9px}.progress i{display:block;height:100%;background:linear-gradient(90deg,var(--accent2),var(--accent));border-radius:99px}.project-row{padding:10px 0;border-bottom:1px solid var(--line)}.project-row:last-child{border-bottom:0}.project-top{display:flex;justify-content:space-between;gap:10px;font-size:11px}.project-top span{color:var(--muted)}
+.list{display:grid;gap:9px}.item{display:flex;align-items:flex-start;justify-content:space-between;gap:13px;padding:16px;border:1px solid var(--line);background:rgba(13,18,38,.74);border-radius:17px;transition:.18s}.item:hover{border-color:rgba(121,87,255,.2);transform:translateY(-1px)}body.light .item{background:#fff}.item-main{min-width:0;flex:1}.item h3{margin:0 0 6px;font-size:14px}.item p{margin:0;color:var(--muted);font-size:12px;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere}.meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.tag{padding:4px 7px;border-radius:99px;background:rgba(121,87,255,.11);color:#b9adff;font-size:9px}.item-actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}.item-actions button{font-size:10px;padding:7px 9px}.done{text-decoration:line-through;opacity:.6}.priority-high{color:#ff8799}.priority-low{color:#61dfb1}.filterbar{display:flex;gap:7px;overflow:auto;padding-bottom:3px;margin-bottom:11px}.filterbar button{white-space:nowrap}.filterbar button.active{border-color:rgba(121,87,255,.35);background:rgba(121,87,255,.13)}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field{display:grid;gap:7px;margin:10px 0}.field.full{grid-column:1/-1}.field label{font-size:10px;color:var(--muted)}.field input,.field textarea,.field select{width:100%;border:1px solid var(--line);border-radius:12px;background:#080c1b;color:var(--text);padding:12px;outline:0}.light .field input,.light .field textarea,.light .field select{background:#f7f9fd}.field textarea{min-height:130px;resize:vertical}.modal-open{overscroll-behavior:none}.modal{position:fixed;z-index:300;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(10px);display:none;align-items:center;justify-content:center;padding:14px}.modal.show{display:flex}.dialog{width:min(690px,100%);max-height:min(calc(100dvh - 24px),calc(var(--vvh) - 24px));overflow:auto;background:#11162d;border:1px solid rgba(255,255,255,.09);border-radius:22px;box-shadow:0 30px 100px rgba(0,0,0,.55);padding:20px}.light .dialog{background:#fff}.dialog h2{margin:0;font-size:19px}.dialog-sub{color:var(--muted);font-size:11px;margin-top:4px}.modal-body{padding-bottom:2px}.modal-actions{position:sticky;bottom:0;display:flex;justify-content:flex-end;gap:8px;padding-top:12px;margin-top:6px;background:linear-gradient(transparent,#11162d 28%)}.light .modal-actions{background:linear-gradient(transparent,#fff 28%)}
+.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}.setting-row{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:13px 0;border-bottom:1px solid var(--line)}.setting-row:last-child{border-bottom:0}.setting-row strong{font-size:12px}.setting-row span{display:block;color:var(--muted);font-size:10px;margin-top:3px}.danger{color:#ff8294!important}.assistant{display:grid;grid-template-columns:1.2fr .8fr;gap:13px}.answer{margin-top:14px;padding:13px;border-radius:13px;background:rgba(121,87,255,.08);border:1px solid rgba(121,87,255,.14);min-height:44px}.habit-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.habit{padding:15px;border:1px solid var(--line);border-radius:16px;background:rgba(14,18,38,.75)}.habit h3{font-size:13px;margin:0 0 7px}.check{width:100%;border:1px solid var(--line);background:rgba(52,211,153,.08);color:var(--good);border-radius:10px;padding:8px;font-size:10px}.check.done{background:rgba(52,211,153,.18)}
+.calendar{display:grid;grid-template-columns:1.15fr .85fr;gap:13px}.cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}.cal-head strong{font-size:14px}.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}.cal-grid span,.cal-grid button{min-height:34px;display:grid;place-items:center;border:0;background:transparent;color:var(--muted);border-radius:9px;font-size:10px}.cal-grid button{color:var(--text);border:1px solid transparent}.cal-grid button:hover{background:rgba(121,87,255,.12)}.cal-grid button.today{background:linear-gradient(135deg,var(--accent2),var(--accent));color:#fff}.cal-grid button.has{box-shadow:inset 0 -2px var(--accent)}
+.mobilebar{display:none}.toast{position:fixed;z-index:700;left:50%;bottom:24px;transform:translate(-50%,120px);transition:.25s;background:#171d35;border:1px solid var(--line);padding:11px 17px;border-radius:99px;box-shadow:var(--shadow);font-size:11px}.toast.show{transform:translate(-50%,0)}.lock{position:fixed;z-index:500;inset:0;display:none;place-items:center;background:radial-gradient(circle at 50% 20%,rgba(121,87,255,.18),transparent 35%),var(--bg);padding:20px}.lock.show{display:grid}.lockbox{width:min(390px,100%);padding:30px;border:1px solid var(--line);border-radius:25px;background:var(--panel);text-align:center;box-shadow:var(--shadow)}.lockbox input{width:100%;padding:14px;border-radius:12px;border:1px solid var(--line);background:#080c1b;color:var(--text);text-align:center;letter-spacing:8px;font-size:22px}
+.command{position:fixed;z-index:400;inset:0;background:rgba(0,0,0,.68);backdrop-filter:blur(9px);display:none;align-items:flex-start;justify-content:center;padding:11vh 16px}.command.show{display:flex}.command-box{width:min(620px,100%);background:var(--panel);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:var(--shadow)}.command-box input{width:100%;padding:16px;border:0;border-bottom:1px solid var(--line);background:transparent;color:var(--text);outline:0}.commands{display:grid;max-height:55vh;overflow:auto}.commands button{border:0;background:transparent;color:var(--text);text-align:left;padding:13px 16px}.commands button:hover{background:rgba(121,87,255,.1)}
+@media(max-width:1180px){.stats{grid-template-columns:repeat(3,1fr)}.grid3{grid-template-columns:1fr 1fr}.grid3 .span3{grid-column:1/-1}.habit-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:820px){.sidebar{display:none}.main{margin-left:0;width:100%;padding:0 13px 88px}.topbar{height:64px}.search{max-width:none}.topbar .iconbtn{display:none}.hero{grid-template-columns:1fr;padding-top:20px}.clock{text-align:left;min-width:0}.stats{grid-template-columns:repeat(2,1fr)}.focus,.grid2,.grid3,.settings-grid,.assistant,.calendar{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}.quick-grid{grid-template-columns:repeat(4,1fr)}.habit-grid{grid-template-columns:1fr 1fr}.item{flex-direction:column}.item-actions{justify-content:flex-start}.mobilebar{position:fixed;z-index:90;display:grid;grid-template-columns:repeat(5,1fr);left:0;right:0;bottom:0;padding:8px 6px calc(8px + env(safe-area-inset-bottom));background:rgba(8,11,25,.94);border-top:1px solid var(--line);backdrop-filter:blur(18px)}.mobilebar button{border:0;background:transparent;color:var(--muted);font-size:8px;padding:3px}.mobilebar button.active{color:var(--text)}.mobilebar b{display:block;font-size:17px;margin-bottom:3px}.modal{align-items:flex-end;padding:0}.dialog{width:100%;max-height:calc(100dvh - 8px);border-radius:22px 22px 0 0;padding:17px 15px calc(12px + env(safe-area-inset-bottom))}.modal-actions{padding-bottom:3px}.search input{padding-right:48px}.shortcut{display:none}}
+@media(max-width:460px){.hero h1{font-size:32px}.stats{gap:8px}.stat{min-height:96px;padding:12px}.stat .num{font-size:23px}.quick-grid{grid-template-columns:repeat(2,1fr)}.section-head h2{font-size:17px}}
+
+/* ===== Responsive + keyboard stability patch ===== */
+html{height:100%;overflow-x:hidden;overscroll-behavior-x:none}
+body{min-height:100%;overflow-x:hidden;overscroll-behavior-x:none;-webkit-text-size-adjust:100%;padding-bottom:env(safe-area-inset-bottom)}
+.main{min-width:0}.page{min-width:0}
+input,textarea,select{max-width:100%;-webkit-tap-highlight-color:transparent}
+input,textarea{scroll-margin-top:96px;scroll-margin-bottom:140px}
+textarea{overflow:auto;-webkit-overflow-scrolling:touch}
+button,.ghost,.primary{touch-action:manipulation}
+.modal{overscroll-behavior:contain}
+.dialog{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scroll-padding-bottom:140px}
+.modal-body{min-height:0}.modal-actions{z-index:2}
+@media(max-width:820px){
+ body{padding-bottom:calc(72px + env(safe-area-inset-bottom))}
+ .main{padding-left:max(13px,env(safe-area-inset-left));padding-right:max(13px,env(safe-area-inset-right));padding-bottom:calc(96px + env(safe-area-inset-bottom))}
+ .topbar{padding-top:env(safe-area-inset-top);height:calc(64px + env(safe-area-inset-top))}
+ .topbar .primary{flex:none;padding:10px 12px}
+ .search input{height:44px;font-size:16px}
+ .section{margin-top:18px}.section-head{align-items:flex-start}
+ .section-head .primary{white-space:nowrap}.card,.focus-card{min-width:0}.item-main{width:100%}
+ .item-actions{width:100%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+ .item-actions button{width:100%;min-height:40px}
+ .mobilebar{grid-template-columns:repeat(6,minmax(0,1fr));padding-left:max(6px,env(safe-area-inset-left));padding-right:max(6px,env(safe-area-inset-right));padding-bottom:calc(8px + env(safe-area-inset-bottom))}
+ .mobilebar button{min-width:0;min-height:46px;overflow:hidden}.mobilebar b{font-size:16px}
+ .modal{align-items:flex-end;padding:0}
+ .dialog{width:100%;max-width:100%;max-height:calc(100dvh - 6px);min-height:0;border-radius:22px 22px 0 0;padding:17px 15px calc(18px + env(safe-area-inset-bottom))}
+ .dialog h2{position:sticky;top:0;background:inherit;z-index:2;padding-bottom:8px}
+ .modal-actions{position:sticky;bottom:0;padding:12px 0 calc(4px + env(safe-area-inset-bottom));margin-top:8px}
+ .modal-actions button{min-height:44px;flex:1}.field{margin:9px 0}
+ .field input,.field textarea,.field select{font-size:16px;line-height:1.35;padding:13px}
+ .field textarea{min-height:150px}.form-grid{gap:4px}.settings-grid .card{overflow:hidden}
+}
+@media(max-width:460px){
+ .topbar{gap:7px}.topbar .primary{font-size:12px;padding:10px 11px}
+ .hero{padding-top:15px}.hero p{font-size:12px}.stat{min-width:0}.card{padding:15px}.item{padding:14px}
+ .item-actions{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(min-width:821px) and (max-width:1100px){
+ .main{padding-left:20px;padding-right:20px}.stats{grid-template-columns:repeat(3,1fr)}
+}
+
+/* Roman Personal OS — professional mobile interaction layer */
+:root{--vvh:100dvh}
+html{scroll-behavior:smooth}
+body{overscroll-behavior-x:none}
+.quick-grid button{min-height:76px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.quick-grid button b{font-size:21px;line-height:1}
+.quick-grid button small{font-size:9px;color:var(--muted);display:block;margin-top:2px}
+.quick-grid button:active{transform:scale(.97)}
+.modal{padding:12px max(12px,env(safe-area-inset-left)) max(12px,env(safe-area-inset-bottom));align-items:flex-end}
+.dialog{max-height:min(calc(100dvh - 24px),calc(var(--vvh) - 24px));padding-bottom:max(14px,env(safe-area-inset-bottom));overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.dialog input,.dialog textarea,.dialog select{font-size:16px}
+.modal-actions{padding-bottom:calc(2px + env(safe-area-inset-bottom))}
+.keyboard-safe{scroll-margin-bottom:180px}
+.reaction-row{display:flex;gap:7px;flex-wrap:wrap}
+.reaction-btn{min-width:42px!important;height:38px!important;padding:7px 10px!important;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.025);font-size:18px!important;cursor:pointer}
+.reaction-btn.active{border-color:rgba(121,87,255,.55);background:rgba(121,87,255,.15);box-shadow:0 0 0 2px rgba(121,87,255,.08)}
+.reaction-pill{display:inline-flex;align-items:center;gap:4px;padding:4px 7px;border-radius:99px;background:rgba(121,87,255,.10);font-size:12px}
+.activity-list{display:grid;gap:8px}
+.activity-row{display:flex;gap:11px;align-items:flex-start;padding:12px;border:1px solid var(--line);border-radius:14px;background:rgba(13,18,38,.62)}
+.activity-icon{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:rgba(121,87,255,.11);font-size:17px;flex:none}
+.activity-row strong{display:block;font-size:11px}.activity-row small{display:block;color:var(--muted2);font-size:9px;margin-top:3px}.activity-row p{margin:5px 0 0;color:var(--muted);font-size:10px}
+.activity-filter{display:flex;gap:7px;overflow:auto;padding-bottom:3px}
+.activity-filter button{white-space:nowrap}
+@media(max-width:820px){
+  .modal{align-items:flex-end}
+  .dialog{width:100%;border-radius:20px 20px 0 0;max-height:min(calc(100dvh - 10px),calc(var(--vvh) - 10px));padding:16px}
+  .form-grid{grid-template-columns:1fr}
+  .field.full{grid-column:auto}
+  .modal-actions{position:sticky}
+}
+
+
+/* ===== Final mobile interaction + professional settings layer ===== */
+.keyboard-open .mobilebar{display:none!important}
+.keyboard-open .toast{bottom:12px}
+@media(max-width:820px){
+  .modal{padding:0}
+  body.keyboard-open{padding-bottom:0!important}
+  body.keyboard-open .main{padding-bottom:18px!important}
+  .dialog{overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y}
+  .dialog .field{scroll-margin-bottom:24px}
+  .settings-grid{grid-template-columns:1fr!important}
+  .settings-grid .card{min-width:0}
+}
+.settings-section-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 8px;border-radius:999px;background:rgba(121,87,255,.10);border:1px solid rgba(121,87,255,.14);color:#b9adff;font-size:9px;font-weight:700}
+.setting-select{min-width:112px;padding:9px 10px;border-radius:10px;background:var(--panel2);color:var(--text);border:1px solid var(--line);outline:none}
+.toggle{position:relative;width:44px;height:25px;border:0;border-radius:999px;background:rgba(255,255,255,.12);padding:0;flex:none}
+.toggle i{position:absolute;top:4px;left:4px;width:17px;height:17px;border-radius:50%;background:#fff;transition:.18s;display:block}
+.toggle.on{background:linear-gradient(135deg,var(--accent2),var(--accent))}
+.toggle.on i{transform:translateX(19px)}
+.setting-note{padding:10px 12px;border-radius:12px;background:rgba(45,141,255,.06);border:1px solid rgba(45,141,255,.12);color:var(--muted);font-size:10px;line-height:1.6}
+body.compact .card{padding:14px} body.compact .section{margin-top:18px}
+body.large-text{font-size:15px} body.large-text .item p,body.large-text .hero p{font-size:13px}
+body.no-motion *{transition:none!important;animation:none!important}
+
+/* ===== v6: hard mobile keyboard/visual-viewport fix ===== */
+:root{--vvh:100dvh;--vvo:0px;--vvw:100vw}
+html,body{width:100%;max-width:100%;overflow-x:hidden}
+body{min-height:100%;overflow-x:hidden}
+.modal{position:fixed;inset:0;width:100%;height:100%;overflow:hidden}
+.dialog{position:relative;max-height:calc(var(--vvh) - 16px);height:auto;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scroll-padding-top:76px;scroll-padding-bottom:160px}
+.modal.show{display:flex}
+@media(max-width:820px){
+  .modal{top:var(--vvo);height:var(--vvh);bottom:auto;align-items:flex-end;padding:0!important}
+  .dialog{
+    width:100%;max-width:100%;
+    max-height:calc(var(--vvh) - 8px)!important;
+    min-height:0;
+    height:auto;
+    border-radius:20px 20px 0 0;
+    overflow-y:auto!important;
+    -webkit-overflow-scrolling:touch;
+    overscroll-behavior-y:contain;
+    padding-bottom:calc(18px + env(safe-area-inset-bottom));
+  }
+  body.keyboard-open .modal{height:var(--vvh)!important}
+  body.keyboard-open .dialog{
+    max-height:var(--vvh)!important;
+    border-radius:14px 14px 0 0;
+    padding-bottom:calc(28px + env(safe-area-inset-bottom));
+  }
+  body.keyboard-open .dialog h2{position:sticky;top:0;z-index:5}
+  body.keyboard-open .modal-actions{position:sticky;bottom:0;z-index:6}
+  .dialog input,.dialog textarea,.dialog select{font-size:16px;line-height:1.35}
+  .dialog .field{scroll-margin-top:88px;scroll-margin-bottom:180px}
+}
+/* Never let the keyboard hide the active control. */
+.keyboard-safe{scroll-margin-top:90px;scroll-margin-bottom:180px}
+
+
+/* ===== V7 ANDROID KEYBOARD OVERLAY FIX ===== */
+html.keyboard-open, body.keyboard-open{height:100%;overflow:hidden}
+body.keyboard-open{position:fixed;left:0;right:0;overflow:hidden}
+body.keyboard-open .mobilebar{display:none!important}
+#modal.keyboard-open{
+  display:flex!important;
+  position:fixed!important;
+  left:0!important;
+  right:0!important;
+  top:0!important;
+  bottom:auto!important;
+  height:var(--vvh,100vh)!important;
+  min-height:0!important;
+  max-height:none!important;
+  padding:8px max(10px,env(safe-area-inset-left)) max(8px,env(safe-area-inset-bottom))!important;
+  align-items:flex-end!important;
+  justify-content:center!important;
+  overflow:hidden!important;
+}
+#modal.keyboard-open .dialog{
+  width:100%!important;
+  max-width:690px!important;
+  height:auto!important;
+  max-height:calc(var(--vvh,100vh) - 16px)!important;
+  min-height:0!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  overscroll-behavior:contain!important;
+  -webkit-overflow-scrolling:touch!important;
+  padding-bottom:calc(16px + env(safe-area-inset-bottom))!important;
+}
+@media(max-width:820px){
+  #modal.keyboard-open .dialog{
+    max-width:none!important;
+    border-radius:20px 20px 0 0!important;
+  }
+}
+#modal.keyboard-open .modal-actions{
+  position:sticky!important;
+  bottom:0!important;
+  z-index:10!important;
+}
+#modal.keyboard-open input,
+#modal.keyboard-open textarea,
+#modal.keyboard-open select{
+  scroll-margin-top:90px!important;
+  scroll-margin-bottom:120px!important;
+}
+
+</style>
+</head>
+<body>
+<div id="lock" class="lock"><div class="lockbox"><div class="brandmark" style="margin:0 auto 14px">R</div><h2>Roman Personal OS</h2><p style="color:var(--muted);font-size:12px">Enter your PIN to unlock your private workspace.</p><input id="pinIn" maxlength="6" inputmode="numeric" type="password" placeholder="••••"><button class="primary" style="width:100%;margin-top:12px" onclick="unlock()">Unlock</button><p id="pinErr" style="color:var(--danger);font-size:11px"></p></div></div>
+<div id="command" class="command" onclick="if(event.target===this)closeCommand()"><div class="command-box"><input id="commandInput" placeholder="Type a command…" oninput="renderCommands()"><div id="commands" class="commands"></div></div></div>
+<div class="app">
+<aside class="sidebar">
+  <div class="brand"><div class="brandmark">R</div><div><strong>Roman</strong><small>Personal OS</small></div></div>
+  <nav class="nav">
+    <div class="group">Workspace</div>
+    <button data-page="dashboard" onclick="showPage('dashboard')"><i>⌂</i>Dashboard</button>
+    <button data-page="notes" onclick="showPage('notes')"><i>📝</i>Notes</button>
+    <button data-page="tasks" onclick="showPage('tasks')"><i>✓</i>Tasks</button>
+    <button data-page="projects" onclick="showPage('projects')"><i>🚀</i>Projects</button>
+    <button data-page="links" onclick="showPage('links')"><i>🔗</i>Links</button>
+    <button data-page="files" onclick="showPage('files')"><i>📁</i>Files</button>
+    <button data-page="device" onclick="showPage('device')"><i>📱</i>My Phone</button>
+    <div class="group">Planning</div>
+    <button data-page="calendar" onclick="showPage('calendar')"><i>📅</i>Calendar</button>
+    <button data-page="habits" onclick="showPage('habits')"><i>🔥</i>Habits</button>
+    <button data-page="goals" onclick="showPage('goals')"><i>🎯</i>Goals</button>
+    <button data-page="journal" onclick="showPage('journal')"><i>📖</i>Journal</button>
+    <div class="group">System</div>
+    <button data-page="assistant" onclick="showPage('assistant')"><i>✦</i>Assistant</button>
+    <button data-page="settings" onclick="showPage('settings')"><i>⚙</i>Settings</button>
+  </nav>
+  <div class="sidebar-bottom"><div class="user"><div class="avatar">R</div><div><b>Roman</b><small>Private workspace</small></div><span class="online"></span></div><button class="ghost" onclick="openForm('note')">＋ Quick Note</button><button class="ghost" onclick="exportData()">⇩ Backup</button></div>
+</aside>
+<main class="main">
+  <header class="topbar"><div class="search"><span class="mag">⌕</span><input id="globalSearch" placeholder="Search your space…" oninput="globalSearch()"><span class="shortcut">Ctrl K</span></div><div class="top-spacer"></div><button class="iconbtn" onclick="openCommand()" title="Command palette">⌘</button><button class="iconbtn" onclick="toggleTheme()" title="Theme">◐</button><button class="primary" onclick="openForm('note')">＋ Add</button></header>
+
+  <section id="page-dashboard" class="page active">
+    <div class="hero"><div><div class="eyebrow">✦ ROMAN PERSONAL OS</div><h1>Good <span id="greeting">Evening</span>, <span class="gradient">Roman</span> 👋</h1><p>Your private command center for ideas, tasks, projects, links, files and daily planning. Everything stays in your browser unless you export it.</p></div><div class="clock"><strong id="time">--:--</strong><span id="date">---</span></div></div>
+    <div class="stats">
+      <div class="stat"><div class="stathead"><span>Notes</span><span class="icon">📝</span></div><div class="num" id="sNotes">0</div><div class="label">Saved notes</div></div>
+      <div class="stat"><div class="stathead"><span>Tasks</span><span class="icon">✓</span></div><div class="num" id="sTasks">0</div><div class="label">Open tasks</div></div>
+      <div class="stat"><div class="stathead"><span>Projects</span><span class="icon">🚀</span></div><div class="num" id="sProjects">0</div><div class="label">Projects</div></div>
+      <div class="stat"><div class="stathead"><span>Links</span><span class="icon">🔗</span></div><div class="num" id="sLinks">0</div><div class="label">Saved links</div></div>
+      <div class="stat"><div class="stathead"><span>Habits</span><span class="icon">🔥</span></div><div class="num" id="sHabits">0</div><div class="label">Daily habits</div></div>
+      <div class="stat"><div class="stathead"><span>Goals</span><span class="icon">🎯</span></div><div class="num" id="sGoals">0</div><div class="label">Active goals</div></div>
+    </div>
+    <div class="section"><div class="focus"><div class="focus-card"><h3>Today's focus</h3><p id="focusText">Choose one important thing and move it forward today.</p><div class="focus-buttons"><button class="primary" onclick="openForm('task')">＋ Add task</button><button class="ghost" onclick="openForm('journal')">✎ Journal</button><button class="ghost" onclick="showPage('habits')">🔥 Habits</button></div></div><div class="card"><div class="card-title"><h3>Quick actions</h3><span class="view">Fast capture</span></div><div class="quick-grid">
+<button onclick="openForm('note')"><b>📝</b>Note<small>Capture thought</small></button>
+<button onclick="openForm('task')"><b>✓</b>Task<small>Next action</small></button>
+<button onclick="openForm('project')"><b>🚀</b>Project<small>Build progress</small></button>
+<button onclick="openForm('link')"><b>🔗</b>Link<small>Save resource</small></button>
+<button onclick="openForm('event')"><b>📅</b>Reminder<small>Schedule time</small></button>
+<button onclick="openForm('habit')"><b>🔥</b>Habit<small>Build streak</small></button>
+<button onclick="openForm('goal')"><b>🎯</b>Goal<small>Track target</small></button>
+<button onclick="openForm('journal')"><b>📖</b>Journal<small>Reflect</small></button>
+<button onclick="showPage('activity')"><b>⚡</b>Activity<small>See your day</small></button>
+<button onclick="openActivityPicker()"><b>✨</b>Reaction<small>React to a moment</small></button>
+</div></div></div></div>
+    <div class="section"><div class="grid3">
+      <div class="card"><div class="card-title"><h3>Recent notes</h3><span class="view" onclick="showPage('notes')">View all</span></div><div id="dashNotes" class="mini-list"></div></div>
+      <div class="card"><div class="card-title"><h3>Today's tasks</h3><span class="view" onclick="showPage('tasks')">View all</span></div><div id="dashTasks" class="mini-list"></div></div>
+      <div class="card"><div class="card-title"><h3>Projects</h3><span class="view" onclick="showPage('projects')">View all</span></div><div id="dashProjects"></div></div>
+    </div></div>
+    <div class="section"><div class="grid2"><div class="card"><div class="card-title"><h3>Activity</h3><span class="view" id="activityCount">0 events</span></div><div id="activityChart" class="chart"></div><div class="legend"><span>Earlier</span><span>Today</span></div></div><div class="card"><div class="card-title"><h3>Upcoming</h3><span class="view" onclick="showPage('calendar')">Calendar</span></div><div id="dashEvents" class="mini-list"></div></div></div></div>
+  </section>
+
+  <section id="page-notes" class="page"><div class="section-head"><div><h2>📝 Notes</h2><p>Ideas, information and things worth remembering.</p></div><button class="primary" onclick="openForm('note')">＋ New note</button></div><div class="filterbar"><button class="ghost active" data-filter="notes:all" onclick="setFilter('notes','all',this)">All</button><button class="ghost" data-filter="notes:favorite" onclick="setFilter('notes','favorite',this)">★ Favorites</button><button class="ghost" data-filter="notes:pinned" onclick="setFilter('notes','pinned',this)">📌 Pinned</button></div><div id="notesList" class="list"></div></section>
+  <section id="page-tasks" class="page"><div class="section-head"><div><h2>✓ Tasks</h2><p>Keep your next actions clear and manageable.</p></div><button class="primary" onclick="openForm('task')">＋ New task</button></div><div class="filterbar"><button class="ghost active" onclick="setTaskFilter('all',this)">All</button><button class="ghost" onclick="setTaskFilter('open',this)">Open</button><button class="ghost" onclick="setTaskFilter('done',this)">Completed</button><button class="ghost" onclick="setTaskFilter('high',this)">High priority</button></div><div id="tasksList" class="list"></div></section>
+  <section id="page-projects" class="page"><div class="section-head"><div><h2>🚀 Projects</h2><p>Track bigger goals from idea to completion.</p></div><button class="primary" onclick="openForm('project')">＋ New project</button></div><div id="projectsList" class="list"></div></section>
+  <section id="page-links" class="page"><div class="section-head"><div><h2>🔗 Links</h2><p>Your personal library of useful websites and resources.</p></div><button class="primary" onclick="openForm('link')">＋ Save link</button></div><div id="linksList" class="list"></div></section>
+  <section id="page-files" class="page"><div class="section-head"><div><h2>📁 Files</h2><p>Store file references, paths and important document notes.</p></div><button class="primary" onclick="openForm('file')">＋ Add file</button></div><div id="filesList" class="list"></div></section>
+
+  <section id="page-calendar" class="page"><div class="section-head"><div><h2>📅 Calendar</h2><p>Plan reminders and see what's coming next.</p></div><button class="primary" onclick="openForm('event')">＋ New reminder</button></div><div class="calendar"><div class="card"><div class="cal-head"><button class="ghost" onclick="moveMonth(-1)">‹</button><strong id="calTitle"></strong><button class="ghost" onclick="moveMonth(1)">›</button></div><div id="calGrid" class="cal-grid"></div></div><div class="card"><div class="card-title"><h3>Upcoming reminders</h3><span class="view">Local</span></div><div id="eventsList" class="list"></div></div></div></section>
+
+  <section id="page-habits" class="page"><div class="section-head"><div><h2>🔥 Habits</h2><p>Build consistency with small daily actions.</p></div><button class="primary" onclick="openForm('habit')">＋ New habit</button></div><div id="habitsList" class="habit-grid"></div></section>
+  <section id="page-goals" class="page"><div class="section-head"><div><h2>🎯 Goals</h2><p>Turn long-term ideas into measurable progress.</p></div><button class="primary" onclick="openForm('goal')">＋ New goal</button></div><div id="goalsList" class="list"></div></section>
+  <section id="page-journal" class="page"><div class="section-head"><div><h2>📖 Journal</h2><p>A private daily space for thoughts, wins and reflections.</p></div><button class="primary" onclick="openForm('journal')">＋ New entry</button></div><div id="journalList" class="list"></div></section>
+
+  <section id="page-assistant" class="page"><div class="section-head"><div><h2>✦ Roman Assistant</h2><p>Offline workspace assistant — no API required.</p></div></div><div class="assistant"><div class="card"><div class="card-title"><h3>Ask your workspace</h3><span class="view">Try natural questions</span></div><p style="color:var(--muted);font-size:11px">Examples: “How many notes?”, “What tasks are open?”, “Show my projects”, “What is coming up?”</p><div style="display:flex;gap:8px;margin-top:12px"><input id="ask" class="field" style="margin:0;flex:1" placeholder="Ask something…" onkeydown="if(event.key==='Enter')askAssistant()"><button class="primary" onclick="askAssistant()">Ask</button></div><div id="answer" class="answer">Your answer will appear here.</div></div><div class="card"><div class="card-title"><h3>Future-ready</h3></div><p style="color:var(--muted);font-size:12px;line-height:1.75">This version is built so the local data model can later connect to a real AI API, voice input, sync service or cloud database without redesigning the workspace.</p><div class="meta"><span class="tag">Offline first</span><span class="tag">Local data</span><span class="tag">AI-ready</span><span class="tag">Backup ready</span></div></div></div></section>
+
+  <section id="page-device" class="page">
+    <div class="section-head"><div><h2>📱 My Phone</h2><p>Your own Android device, synced with Roman Personal OS.</p></div><div class="actions"><button class="ghost" onclick="refreshDevice()">↻ Refresh</button><button class="primary" onclick="deviceHelp()">Setup</button></div></div>
+    <div class="stats" style="grid-template-columns:repeat(5,1fr)">
+      <div class="stat"><div class="stathead"><span>Status</span><span class="icon">🟢</span></div><div id="devOnline" class="num" style="font-size:18px">—</div><div class="label">last sync</div></div>
+      <div class="stat"><div class="stathead"><span>Battery</span><span class="icon">🔋</span></div><div id="devBattery" class="num">—</div><div class="label">current level</div></div>
+      <div class="stat"><div class="stathead"><span>Notifications</span><span class="icon">🔔</span></div><div id="devNotifs" class="num">—</div><div class="label">captured</div></div>
+      <div class="stat"><div class="stathead"><span>Calls</span><span class="icon">📞</span></div><div id="devCalls" class="num">—</div><div class="label">recent records</div></div>
+      <div class="stat"><div class="stathead"><span>SMS</span><span class="icon">💬</span></div><div id="devSms" class="num">—</div><div class="label">recent records</div></div>
+    </div>
+    <div class="grid2 section">
+      <div class="card"><div class="card-title"><h3>Device overview</h3><span id="devTime" class="view">—</span></div><div id="devInfo" class="mini-list"><div class="empty">No device sync received yet.</div></div></div>
+      <div class="card"><div class="card-title"><h3>📍 Location</h3><span class="view">Last known</span></div><div id="devLocation" class="empty">No location received.</div></div>
+    </div>
+    <div class="grid2 section">
+      <div class="card"><div class="card-title"><h3>🔔 Recent notifications</h3></div><div id="devNotifList" class="list"></div></div>
+      <div class="card"><div class="card-title"><h3>📞 Recent calls</h3></div><div id="devCallList" class="list"></div></div>
+    </div>
+    <div class="card section"><div class="card-title"><h3>💬 Recent SMS</h3><span class="view">Private device data</span></div><div id="devSmsList" class="list"></div></div>
+    <div class="card section"><div class="card-title"><h3>🔐 Permission status</h3></div><div id="devPerms" class="meta"><span class="tag">Waiting for sync</span></div></div>
+  </section>
+
+  <section id="page-activity" class="page">
+    <div class="section-head">
+      <div><h2>⚡ Activity</h2><p>Your personal timeline of actions, progress and reactions.</p></div>
+      <button class="ghost" onclick="clearActivity()">Clear activity</button>
+    </div>
+    <div class="activity-filter">
+      <button class="ghost active" data-af="all" onclick="setActivityFilter('all',this)">All</button>
+      <button class="ghost" data-af="tasks" onclick="setActivityFilter('tasks',this)">✅ Tasks</button>
+      <button class="ghost" data-af="habits" onclick="setActivityFilter('habits',this)">🔥 Habits</button>
+      <button class="ghost" data-af="goals" onclick="setActivityFilter('goals',this)">🎯 Goals</button>
+      <button class="ghost" data-af="notes" onclick="setActivityFilter('notes',this)">📝 Notes</button>
+    </div>
+    <div class="grid2">
+      <div class="card"><div class="card-title"><h3>Today</h3><span class="view" id="activityTodayCount">0</span></div><div id="activityToday" class="activity-list"></div></div>
+      <div class="card"><div class="card-title"><h3>Recent</h3><span class="view" id="activityRecentCount">0</span></div><div id="activityRecent" class="activity-list"></div></div>
+    </div>
+  </section>
+  <section id="page-settings" class="page">
+    <div class="section-head"><div><h2>⚙ Settings</h2><p>Professional controls for appearance, productivity, privacy, notifications and data.</p></div><span class="settings-section-badge">⚡ Local-first</span></div>
+    <div class="settings-grid">
+      <div class="card">
+        <div class="card-title"><h3>🎨 Appearance</h3></div>
+        <div class="setting-row"><div><strong>Theme</strong><span>Switch between dark and light mode.</span></div><button class="ghost" onclick="toggleTheme()">Toggle</button></div>
+        <div class="setting-row"><div><strong>Accent</strong><span>Choose your interface accent.</span></div><select id="accentSelect" class="setting-select" onchange="setAccent(this.value)"><option value="#7957ff">Purple</option><option value="#2d8dff">Blue</option><option value="#12b981">Green</option><option value="#f04f9b">Pink</option></select></div>
+        <div class="setting-row"><div><strong>Compact mode</strong><span>Reduce spacing for more content.</span></div><button id="compactToggle" class="toggle" onclick="toggleSetting('compact',this)"><i></i></button></div>
+        <div class="setting-row"><div><strong>Animations</strong><span>Keep subtle interface motion.</span></div><button id="motionToggle" class="toggle on" onclick="toggleSetting('motion',this)"><i></i></button></div>
+      </div>
+      <div class="card">
+        <div class="card-title"><h3>🧭 Workspace</h3></div>
+        <div class="setting-row"><div><strong>Start page</strong><span>Page opened when Roman Personal OS loads.</span></div><select id="startPageSelect" class="setting-select" onchange="setSetting('startPage',this.value)"><option value="dashboard">Dashboard</option><option value="notes">Notes</option><option value="tasks">Tasks</option><option value="activity">Activity</option><option value="calendar">Calendar</option></select></div>
+        <div class="setting-row"><div><strong>Auto-save</strong><span>Keep changes saved locally as you work.</span></div><button id="autosaveToggle" class="toggle on" onclick="toggleSetting('autosave',this)"><i></i></button></div>
+        <div class="setting-row"><div><strong>Confirm deletes</strong><span>Ask before removing notes, tasks and other items.</span></div><button id="confirmToggle" class="toggle on" onclick="toggleSetting('confirmDelete',this)"><i></i></button></div>
+        <div class="setting-note">Your workspace data stays in this browser unless you export or connect a future sync service.</div>
+      </div>
+      <div class="card">
+        <div class="card-title"><h3>🔔 Notifications</h3></div>
+        <div class="setting-row"><div><strong>Browser reminders</strong><span>Allow reminder notifications while this page is open.</span></div><button class="ghost" onclick="requestNotifications()">Enable</button></div>
+        <div class="setting-row"><div><strong>Reminder sound</strong><span>Keep notification feedback subtle.</span></div><button id="soundToggle" class="toggle on" onclick="toggleSetting('sound',this)"><i></i></button></div>
+        <div class="setting-row"><div><strong>Daily check-in</strong><span>Prepare a future daily planning prompt.</span></div><button id="checkinToggle" class="toggle" onclick="toggleSetting('dailyCheckin',this)"><i></i></button></div>
+      </div>
+      <div class="card">
+        <div class="card-title"><h3>🛡️ Privacy & security</h3></div>
+        <div class="setting-row"><div><strong>PIN lock</strong><span>Protect this workspace on your device.</span></div><button class="ghost" onclick="setPin()">Set PIN</button></div>
+        <div class="setting-row"><div><strong>Lock now</strong><span>Lock the workspace immediately.</span></div><button class="ghost" onclick="lockNow()">Lock</button></div>
+        <div class="setting-row"><div><strong>Privacy mode</strong><span>Hide sensitive previews in dashboard cards.</span></div><button id="privacyToggle" class="toggle" onclick="toggleSetting('privacyMode',this)"><i></i></button></div>
+      </div>
+      <div class="card">
+        <div class="card-title"><h3>💾 Backup & data</h3></div>
+        <div class="setting-row"><div><strong>Export data</strong><span>Download everything as JSON.</span></div><button class="primary" onclick="exportData()">Export</button></div>
+        <div class="setting-row"><div><strong>Import data</strong><span>Restore a previous backup.</span></div><label class="ghost" style="cursor:pointer">Import<input type="file" accept=".json" hidden onchange="importData(event)"></label></div>
+        <div class="setting-row"><div><strong>Clear all data</strong><span>Use only after making a backup.</span></div><button class="ghost danger" onclick="clearAll()">Clear</button></div>
+      </div>
+      <div class="card">
+        <div class="card-title"><h3>♿ Accessibility & experience</h3></div>
+        <div class="setting-row"><div><strong>Larger text</strong><span>Increase workspace text size for readability.</span></div><button id="textToggle" class="toggle" onclick="toggleSetting('largeText',this)"><i></i></button></div>
+        <div class="setting-row"><div><strong>Keyboard-safe forms</strong><span>Keep active fields visible above the mobile keyboard.</span></div><span class="settings-section-badge">Always on</span></div>
+        <div class="setting-row"><div><strong>Safe-area layout</strong><span>Respect Android navigation and status-bar insets.</span></div><span class="settings-section-badge">Enabled</span></div>
+      </div>
+      <div class="card">
+        <div class="card-title"><h3>🚀 Future-ready</h3></div>
+        <p style="color:var(--muted);font-size:12px;line-height:1.7">Prepared for future sync, voice capture, AI assistance, widgets, cloud backup, richer activity analytics and Android companion integration without changing the core workspace.</p>
+        <div class="meta"><span class="tag">Offline first</span><span class="tag">Local data</span><span class="tag">AI-ready</span><span class="tag">Backup ready</span><span class="tag">Mobile-safe</span></div>
+        <p style="color:var(--muted2);font-size:10px;margin:12px 0 0">Roman Personal OS • v3.0 professional mobile build</p>
+      </div>
+    </div>
+  </section>
+</main></div>
+<div class="mobilebar"><button data-m="dashboard" onclick="showPage('dashboard')"><b>⌂</b>Home</button><button data-m="notes" onclick="showPage('notes')"><b>📝</b>Notes</button><button data-m="tasks" onclick="showPage('tasks')"><b>✓</b>Tasks</button><button data-m="projects" onclick="showPage('projects')"><b>🚀</b>Projects</button><button data-m="device" onclick="showPage('device')"><b>📱</b>Phone</button><button data-m="settings" onclick="showPage('settings')"><b>⚙</b>More</button></div>
+<div id="modal" class="modal" onclick="if(event.target===this)closeModal()"><div class="dialog"><h2 id="formTitle">Add</h2><div id="formSub" class="dialog-sub"></div><div id="formBody" class="modal-body"></div><div class="modal-actions"><button class="ghost" onclick="closeModal()">Cancel</button><button class="primary" onclick="saveForm()">Save</button></div></div></div>
+<div id="toast" class="toast"></div>
+<script>
+const KEY='roman_personal_os_v1';
+let db=load(), editId=null, formType=null, currentPage='dashboard', filters={notes:'all',tasks:'all'}, calDate=new Date();
+function blank(){return{notes:[],tasks:[],projects:[],links:[],files:[],events:[],habits:[],goals:[],journal:[],activity:[],settings:{theme:'dark',accent:'#7957ff',pin:'',compact:false,motion:true,autosave:true,confirmDelete:true,startPage:'dashboard',sound:true,dailyCheckin:false,privacyMode:false,largeText:false}}}
+function load(){try{const x=JSON.parse(localStorage.getItem(KEY)||'null');const b=blank();return {...b,...(x||{}),settings:{...b.settings,...(x?.settings||{})},habits:x?.habits||[],goals:x?.goals||[],journal:x?.journal||[]}}catch(e){return blank()}}
+function save(){localStorage.setItem(KEY,JSON.stringify(db))}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,8)}
+function esc(s=''){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+function toast(s){const t=document.getElementById('toast');t.textContent=s;t.classList.add('show');clearTimeout(window.tt);window.tt=setTimeout(()=>t.classList.remove('show'),2200)}
+function log(type,title){db.activity.unshift({id:uid(),type,title,at:Date.now(),reaction:window.formReaction||''});db.activity=db.activity.slice(0,60);save()}
+function showPage(id){if(document.activeElement&&/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName)&&!document.getElementById('modal')?.contains(document.activeElement))document.activeElement.blur();currentPage=id;document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id==='page-'+id));document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===id));document.querySelectorAll('.mobilebar button').forEach(b=>b.classList.toggle('active',b.dataset.m===id));window.scrollTo({top:0,behavior:'auto'});render();if(id==='device')refreshDevice()}
+function toggleTheme(){db.settings.theme=db.settings.theme==='dark'?'light':'dark';applySettings();save()}
+function applySettings(){document.body.classList.toggle('light',db.settings.theme==='light');document.documentElement.style.setProperty('--accent',db.settings.accent||'#7957ff');const a=document.getElementById('accentSelect');if(a)a.value=db.settings.accent||'#7957ff'}
+function setAccent(v){db.settings.accent=v;applySettings();save();toast('Accent updated ✓')}
+
+let activityFilter='all',formReaction='';
+function pickReaction(r){formReaction=r||'';document.querySelectorAll('#reactionPicker .reaction-btn').forEach(b=>b.classList.toggle('active',b.dataset.r===formReaction))}
+function activityIcon(type=''){const t=String(type).toLowerCase();if(t.includes('task'))return'✅';if(t.includes('habit'))return'🔥';if(t.includes('goal'))return'🎯';if(t.includes('note'))return'📝';if(t.includes('project'))return'🚀';if(t.includes('link'))return'🔗';if(t.includes('journal'))return'📖';if(t.includes('reminder')||t.includes('event'))return'📅';if(t.includes('reaction'))return'✨';return'⚡'}
+function activityGroup(type=''){const t=String(type).toLowerCase();if(t.includes('task'))return'tasks';if(t.includes('habit'))return'habits';if(t.includes('goal'))return'goals';if(t.includes('note'))return'notes';return'all'}
+function renderActivity(){const list=(db.activity||[]).filter(x=>activityFilter==='all'||activityGroup(x.type)===activityFilter).sort((a,b)=>b.at-a.at);const todayKey=keyDate(new Date());const today=list.filter(x=>keyDate(new Date(x.at))===todayKey);const recent=list.filter(x=>keyDate(new Date(x.at))!==todayKey);const row=x=>`<div class="activity-row"><div class="activity-icon">${activityIcon(x.type)}</div><div style="min-width:0;flex:1"><strong>${esc(x.title||x.type)}</strong><small>${esc(x.type||'Activity')} · ${new Date(x.at).toLocaleString([], {dateStyle:'medium',timeStyle:'short'})}</small>${x.reaction?`<p><span class="reaction-pill">${x.reaction} Reaction</span></p>`:''}</div></div>`;document.getElementById('activityToday').innerHTML=today.map(row).join('')||'<div class="empty">No activity today yet.</div>';document.getElementById('activityRecent').innerHTML=recent.slice(0,30).map(row).join('')||'<div class="empty">Your recent activity will appear here.</div>';document.getElementById('activityTodayCount').textContent=today.length+' events';document.getElementById('activityRecentCount').textContent=recent.length+' events'}
+function setActivityFilter(v,el){activityFilter=v;el?.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('active'));el?.classList.add('active');renderActivity()}
+function clearActivity(){if(!confirm('Clear your activity timeline?'))return;db.activity=[];save();renderActivity();renderDashboard();toast('Activity cleared')}
+function openActivityPicker(){const title=prompt('What moment do you want to react to?');if(!title)return;const r=prompt('Choose reaction: 💡 😊 🔥 ⭐ 🎉 ❤️ 💪');if(!r)return;db.activity.unshift({id:uid(),type:'Reaction',title,at:Date.now(),reaction:r});db.activity=db.activity.slice(0,60);save();renderActivity();renderDashboard();toast('Reaction saved ✓')}
+
+function openForm(type,id=null){formType=type;editId=id;document.body.classList.add('modal-open');document.documentElement.style.overflow='hidden';const maps={note:'notes',task:'tasks',project:'projects',link:'links',file:'files',event:'events',habit:'habits',goal:'goals',journal:'journal'};const old=id?db[maps[type]].find(x=>x.id===id):null;const names={note:'Note',task:'Task',project:'Project',link:'Link',file:'File',event:'Reminder',habit:'Habit',goal:'Goal',journal:'Journal entry'};document.getElementById('formTitle').textContent=(id?'Edit ':'Add ')+names[type];document.querySelector('#modal .modal-actions .primary').textContent=id?'Save changes':'Save';document.getElementById('formSub').textContent=id?'Update your saved item.':'Add something to your personal workspace.';let b='';
+if(type==='note')b=`<div class="field"><label>Title</label><input id="fTitle" value="${esc(old?.title||'')}" autocomplete="off"></div><div class="field"><label>Note</label><textarea id="fText" placeholder="Write your note…">${esc(old?.text||'')}</textarea></div><div class="field"><label>Tags</label><input id="fTags" value="${esc((old?.tags||[]).join(', '))}" placeholder="idea, work, personal"></div>`;
+if(type==='task')b=`<div class="field"><label>Task</label><input id="fTitle" value="${esc(old?.title||'')}" autocomplete="off"></div><div class="field"><label>Details</label><textarea id="fText" placeholder="What needs to be done?">${esc(old?.text||'')}</textarea></div><div class="form-grid"><div class="field"><label>Priority</label><select id="fPriority"><option ${old?.priority==='Low'?'selected':''}>Low</option><option ${!old||old?.priority==='Medium'?'selected':''}>Medium</option><option ${old?.priority==='High'?'selected':''}>High</option></select></div><div class="field"><label>Due date</label><input id="fDate" type="date" value="${old?.date||''}"></div></div>`;
+if(type==='project')b=`<div class="field"><label>Project name</label><input id="fTitle" value="${esc(old?.title||'')}"></div><div class="field"><label>Description</label><textarea id="fText">${esc(old?.text||'')}</textarea></div><div class="form-grid"><div class="field"><label>Status</label><select id="fStatus"><option ${!old||old?.status==='Planning'?'selected':''}>Planning</option><option ${old?.status==='Working'?'selected':''}>Working</option><option ${old?.status==='Completed'?'selected':''}>Completed</option></select></div><div class="field"><label>Progress %</label><input id="fProgress" type="number" min="0" max="100" value="${old?.progress??0}"></div></div><div class="field"><label>Deadline</label><input id="fDate" type="date" value="${old?.date||''}"></div>`;
+if(type==='link')b=`<div class="field"><label>Name</label><input id="fTitle" value="${esc(old?.title||'')}"></div><div class="field"><label>URL</label><input id="fUrl" value="${esc(old?.url||'')}" placeholder="https://example.com"></div><div class="field"><label>Category / tags</label><input id="fTags" value="${esc((old?.tags||[]).join(', '))}" placeholder="tools, learning"></div>`;
+if(type==='file')b=`<div class="field"><label>File name</label><input id="fTitle" value="${esc(old?.title||'')}"></div><div class="field"><label>Path / URL</label><input id="fUrl" value="${esc(old?.url||'')}" placeholder="/storage/... or https://..."></div><div class="field"><label>Description</label><textarea id="fText">${esc(old?.text||'')}</textarea></div>`;
+if(type==='event')b=`<div class="field"><label>Reminder</label><input id="fTitle" value="${esc(old?.title||'')}"></div><div class="field"><label>Details</label><textarea id="fText">${esc(old?.text||'')}</textarea></div><div class="field"><label>Date & time</label><input id="fDate" type="datetime-local" value="${old?.date||''}"></div><div class="field"><label><input id="fNotify" type="checkbox" ${old?.notify?'checked':''}> Enable browser notification when this page is open</label></div>`;
+if(type==='habit')b=`<div class="field"><label>Habit name</label><input id="fTitle" value="${esc(old?.title||'')}" placeholder="Drink water, study, exercise…"></div><div class="field"><label>Target</label><input id="fText" value="${esc(old?.text||'')}" placeholder="Small daily target"></div>`;
+if(type==='goal')b=`<div class="field"><label>Goal</label><input id="fTitle" value="${esc(old?.title||'')}"></div><div class="field"><label>Why / details</label><textarea id="fText">${esc(old?.text||'')}</textarea></div><div class="form-grid"><div class="field"><label>Progress %</label><input id="fProgress" type="number" min="0" max="100" value="${old?.progress??0}"></div><div class="field"><label>Deadline</label><input id="fDate" type="date" value="${old?.date||''}"></div></div>`;
+if(type==='journal')b=`<div class="field"><label>Title</label><input id="fTitle" value="${esc(old?.title||('Daily reflection — '+new Date().toLocaleDateString()))}"></div><div class="field"><label>Write freely</label><textarea id="fText" style="min-height:190px" placeholder="How was your day? What went well? What will you improve tomorrow?">${esc(old?.text||'')}</textarea></div>`;
+document.getElementById('formBody').innerHTML=b+'<div class="field full"><label>Reaction</label><div class="reaction-row" id="reactionPicker">\n<button type="button" class="reaction-btn" data-r="💡" onclick="pickReaction(\'💡\')">💡</button>\n<button type="button" class="reaction-btn" data-r="😊" onclick="pickReaction(\'😊\')">😊</button>\n<button type="button" class="reaction-btn" data-r="🔥" onclick="pickReaction(\'🔥\')">🔥</button>\n<button type="button" class="reaction-btn" data-r="⭐" onclick="pickReaction(\'⭐\')">⭐</button>\n<button type="button" class="reaction-btn" data-r="🎉" onclick="pickReaction(\'🎉\')">🎉</button>\n<button type="button" class="reaction-btn" data-r="❤️" onclick="pickReaction(\'❤️\')">❤️</button>\n<button type="button" class="reaction-btn" data-r="💪" onclick="pickReaction(\'💪\')">💪</button>\n<button type="button" class="reaction-btn" data-r="" onclick="pickReaction(\'\')">×</button>\n</div></div>';document.getElementById('modal').classList.add('show');setTimeout(()=>{const el=document.getElementById('fTitle');if(el){el.focus({preventScroll:true});setTimeout(()=>{try{el.scrollIntoView({block:'center',inline:'nearest',behavior:'auto'})}catch(_){el.scrollIntoView(false)}},90)}},180)}
+function closeModal(){document.getElementById('modal').classList.remove('show');document.body.classList.remove('modal-open');document.documentElement.style.overflow='';formType=null;editId=null;formReaction=''}
+function saveForm(){const maps={note:'notes',task:'tasks',project:'projects',link:'links',file:'files',event:'events',habit:'habits',goal:'goals',journal:'journal'};const arr=db[maps[formType]];const title=document.getElementById('fTitle')?.value.trim();if(!title)return toast('Please enter a title');let x=editId?arr.find(a=>a.id===editId):{id:uid(),created:Date.now()};x.title=title;x.text=document.getElementById('fText')?.value.trim()||'';x.tags=(document.getElementById('fTags')?.value||'').split(',').map(s=>s.trim()).filter(Boolean);x.url=document.getElementById('fUrl')?.value.trim()||'';x.date=document.getElementById('fDate')?.value||'';x.reaction=window.formReaction||'';if(formType==='task'){x.priority=document.getElementById('fPriority').value;x.done=x.done||false}if(formType==='project'){x.status=document.getElementById('fStatus').value;x.progress=Math.max(0,Math.min(100,+document.getElementById('fProgress').value||0))}if(formType==='event'){x.notify=!!document.getElementById('fNotify')?.checked;if(x.notify&&'Notification' in window&&Notification.permission==='default')Notification.requestPermission().catch(()=>{})}if(formType==='habit'){x.checkins=x.checkins||{}}if(formType==='goal'){x.progress=Math.max(0,Math.min(100,+document.getElementById('fProgress').value||0))}if(!editId)arr.unshift(x);save();log((editId?'Edited ':'Added ')+formType,title);closeModal();render();toast(editId?'Updated ✓':'Saved ✓')}
+function remove(type,id){if(db.settings.confirmDelete&&!confirm('Delete this item?'))return;db[type]=db[type].filter(x=>x.id!==id);save();render();toast('Deleted')}
+function starNote(id){const x=db.notes.find(x=>x.id===id);if(x){x.favorite=!x.favorite;save();render()}}
+function pinNote(id){const x=db.notes.find(x=>x.id===id);if(x){x.pinned=!x.pinned;save();render()}}
+function toggleTask(id){const x=db.tasks.find(x=>x.id===id);if(x){x.done=!x.done;save();log(x.done?'Completed task':'Reopened task',x.title);render();toast(x.done?'Task completed ✓':'Task reopened')}}
+function setFilter(k,v,el){filters[k]=v;el?.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('active'));el?.classList.add('active');render()}
+function setTaskFilter(v,el){filters.tasks=v;el?.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('active'));el?.classList.add('active');render()}
+function searchTerm(){return (document.getElementById('globalSearch')?.value||'').toLowerCase().trim()}
+function match(x){const s=searchTerm();return !s||[x.title,x.text,x.url,(x.tags||[]).join(' ')].join(' ').toLowerCase().includes(s)}
+function itemButtons(type,x,extra=''){return `<div class="item-actions">${extra}<button class="ghost" onclick="openForm('${type.slice(0,-1)}','${x.id}')">Edit</button><button class="ghost" onclick="remove('${type}','${x.id}')">Delete</button></div>`}
+function renderList(id,arr,empty,html){const el=document.getElementById(id);if(!arr.length){el.innerHTML=`<div class="empty">${empty}</div>`;return}el.innerHTML=arr.map(html).join('')}
+function renderNotes(){let a=db.notes.filter(match);if(filters.notes==='favorite')a=a.filter(x=>x.favorite);if(filters.notes==='pinned')a=a.filter(x=>x.pinned);a.sort((x,y)=>(y.pinned-x.pinned)||(y.created-x.created));renderList('notesList',a,'No notes found. Create your first note.',x=>`<div class="item"><div class="item-main"><h3>${x.pinned?'📌 ':''}${x.favorite?'★ ':''}${esc(x.title)}</h3><p>${esc(x.text||'No content')}</p><div class="meta">${(x.tags||[]).map(t=>`<span class="tag">#${esc(t)}</span>`).join('')}</div>${x.reaction?`<span class="reaction-pill">${x.reaction}</span>`:''}</div>${itemButtons('notes',x,`<button class="ghost" onclick="starNote('${x.id}')">${x.favorite?'★':'☆'}</button><button class="ghost" onclick="pinNote('${x.id}')">${x.pinned?'Unpin':'Pin'}</button>`)}</div>`)}
+function renderTasks(){let a=db.tasks.filter(match);if(filters.tasks==='open')a=a.filter(x=>!x.done);if(filters.tasks==='done')a=a.filter(x=>x.done);if(filters.tasks==='high')a=a.filter(x=>x.priority==='High');a.sort((x,y)=>Number(x.done)-Number(y.done));renderList('tasksList',a,'No tasks found.',x=>`<div class="item"><div class="item-main"><h3 class="${x.done?'done':''}">${x.done?'✓ ':''}${esc(x.title)}</h3><p>${esc(x.text||'No details')}</p><div class="meta"><span class="tag ${x.priority==='High'?'priority-high':x.priority==='Low'?'priority-low':''}">${esc(x.priority||'Medium')}</span>${x.date?`<span class="tag">Due ${esc(x.date)}</span>`:''}</div>${x.reaction?`<span class="reaction-pill">${x.reaction}</span>`:''}</div>${itemButtons('tasks',x,`<button class="ghost" onclick="toggleTask('${x.id}')">${x.done?'Undo':'Done'}</button>`)}</div>`)}
+function renderProjects(){renderList('projectsList',db.projects.filter(match),'No projects yet. Start your first project.',x=>`<div class="item"><div class="item-main"><h3>🚀 ${esc(x.title)}</h3><p>${esc(x.text||'No description')}</p><div class="meta"><span class="tag">${esc(x.status||'Planning')}</span><span class="tag">${x.progress||0}%</span>${x.date?`<span class="tag">Due ${esc(x.date)}</span>`:''}</div><div class="progress"><i style="width:${Math.max(0,Math.min(100,x.progress||0))}%"></i></div>${x.reaction?`<span class="reaction-pill">${x.reaction}</span>`:''}</div>${itemButtons('projects',x)}</div>`)}
+function renderLinks(){renderList('linksList',db.links.filter(match),'No links saved yet.',x=>`<div class="item"><div class="item-main"><h3>🔗 ${esc(x.title)}</h3><p>${esc(x.url||'No URL')}</p><div class="meta">${(x.tags||[]).map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div>${x.reaction?`<span class="reaction-pill">${x.reaction}</span>`:''}</div>${itemButtons('links',x,`<button class="ghost" onclick="openLink('${esc(x.url)}')">Open</button>`)}</div>`)}
+function openLink(u){if(!u)return toast('No URL saved');window.open(u.startsWith('http')?u:'https://'+u,'_blank')}
+function renderFiles(){renderList('filesList',db.files.filter(match),'No file references yet.',x=>`<div class="item"><div class="item-main"><h3>📁 ${esc(x.title)}</h3><p>${esc(x.text||'No description')}</p><div class="meta"><span class="tag">${esc(x.url||'No path')}</span></div></div>${itemButtons('files',x)}</div>`)}
+function renderEvents(){let a=db.events.filter(match).sort((x,y)=>String(x.date).localeCompare(String(y.date)));renderList('eventsList',a,'No reminders yet.',x=>`<div class="item"><div class="item-main"><h3>📅 ${esc(x.title)}</h3><p>${esc(x.text||'No details')}</p><div class="meta"><span class="tag">${esc(formatDateTime(x.date))}</span>${x.notify?'<span class="tag">🔔 Notification</span>':''}</div>${x.reaction?`<span class="reaction-pill">${x.reaction}</span>`:''}</div>${itemButtons('events',x)}</div>`)}
+function renderHabits(){const el=document.getElementById('habitsList');if(!db.habits.length){el.innerHTML='<div class="empty" style="grid-column:1/-1">No habits yet. Add one small habit to start building consistency.</div>';return}el.innerHTML=db.habits.filter(match).map(x=>{const today=keyDate(new Date()),done=!!x.checkins?.[today],streak=habitStreak(x);return `<div class="habit"><h3>🔥 ${esc(x.title)}</h3><p style="color:var(--muted);font-size:10px;min-height:30px">${esc(x.text||'Daily habit')}</p><div class="meta"><span class="tag">${streak} day streak</span></div><button class="check ${done?'done':''}" onclick="toggleHabit('${x.id}')">${done?'✓ Done today':'Mark today'}</button><div class="actions" style="margin-top:8px"><button class="ghost" onclick="openForm('habit','${x.id}')">Edit</button><button class="ghost" onclick="remove('habits','${x.id}')">Delete</button></div></div>`}).join('')}
+function keyDate(d){return d.toISOString().slice(0,10)}
+function toggleHabit(id){const x=db.habits.find(x=>x.id===id);if(!x)return;x.checkins=x.checkins||{};const k=keyDate(new Date());x.checkins[k]=!x.checkins[k];save();log(x.checkins[k]?'Completed habit':'Unchecked habit',x.title);render();toast(x.checkins[k]?'Habit completed ✓':'Habit unchecked')}
+function habitStreak(x){let d=new Date(),n=0;for(let i=0;i<366;i++){if(x.checkins?.[keyDate(d)]){n++;d.setDate(d.getDate()-1)}else break}return n}
+function renderGoals(){renderList('goalsList',db.goals.filter(match),'No goals yet. Define something meaningful to work toward.',x=>`<div class="item"><div class="item-main"><h3>🎯 ${esc(x.title)}</h3><p>${esc(x.text||'No details')}</p><div class="meta"><span class="tag">${x.progress||0}%</span>${x.date?`<span class="tag">Target ${esc(x.date)}</span>`:''}</div><div class="progress"><i style="width:${x.progress||0}%"></i></div>${x.reaction?`<span class="reaction-pill">${x.reaction}</span>`:''}</div>${itemButtons('goals',x)}</div>`)}
+function renderJournal(){renderList('journalList',db.journal.filter(match).sort((a,b)=>b.created-a.created),'No journal entries yet.',x=>`<div class="item"><div class="item-main"><h3>📖 ${esc(x.title)}</h3><p>${esc(x.text||'')}</p><div class="meta"><span class="tag">${new Date(x.created).toLocaleDateString()}</span></div>${x.reaction?`<span class="reaction-pill">${x.reaction}</span>`:''}</div>${itemButtons('journal',x)}</div>`)}
+function renderCalendar(){const y=calDate.getFullYear(),m=calDate.getMonth();document.getElementById('calTitle').textContent=calDate.toLocaleDateString([], {month:'long',year:'numeric'});const first=new Date(y,m,1).getDay(),days=new Date(y,m+1,0).getDate(),today=keyDate(new Date());let h=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(x=>`<span>${x}</span>`).join('');for(let i=0;i<first;i++)h+='<span></span>';for(let d=1;d<=days;d++){const date=new Date(y,m,d),k=keyDate(date),has=db.events.some(e=>String(e.date||'').slice(0,10)===k);h+=`<button class="${k===today?'today ':''}${has?'has':''}" onclick="dayReminder('${k}')">${d}</button>`}document.getElementById('calGrid').innerHTML=h}
+function moveMonth(n){calDate.setMonth(calDate.getMonth()+n);renderCalendar()}
+function dayReminder(k){const e=db.events.filter(x=>String(x.date||'').startsWith(k));if(e.length){toast(e.length+' reminder(s) on '+k)}else openForm('event')}
+function formatDateTime(v){if(!v)return 'No date';const d=new Date(v);return isNaN(d)?v:d.toLocaleString([], {dateStyle:'medium',timeStyle:'short'})}
+function renderDashboard(){document.getElementById('sNotes').textContent=db.notes.length;document.getElementById('sTasks').textContent=db.tasks.filter(x=>!x.done).length;document.getElementById('sProjects').textContent=db.projects.length;document.getElementById('sLinks').textContent=db.links.length;document.getElementById('sHabits').textContent=db.habits.length;document.getElementById('sGoals').textContent=db.goals.length;const n=db.notes.filter(match).slice().sort((a,b)=>b.created-a.created).slice(0,4);document.getElementById('dashNotes').innerHTML=n.map(x=>`<div class="mini-row"><span class="dot"></span><div><strong>${esc(x.title)}</strong><small>${esc(x.text||'No description')}</small></div></div>`).join('')||'<div class="empty">No notes yet.</div>';const t=db.tasks.filter(x=>!x.done).slice(0,4);document.getElementById('dashTasks').innerHTML=t.map(x=>`<div class="mini-row"><span class="dot" style="background:${x.priority==='High'?'#ff5d78':x.priority==='Low'?'#34d399':'#5ca8ff'}"></span><div><strong>${esc(x.title)}</strong><small>${esc(x.priority||'Medium')}${x.date?' · '+esc(x.date):''}</small></div></div>`).join('')||'<div class="empty">All tasks completed 🎉</div>';const p=db.projects.slice(0,5);document.getElementById('dashProjects').innerHTML=p.map(x=>`<div class="project-row"><div class="project-top"><b>${esc(x.title)}</b><span>${x.progress||0}%</span></div><div class="progress"><i style="width:${x.progress||0}%"></i></div></div>`).join('')||'<div class="empty">No projects yet.</div>';const e=db.events.filter(x=>x.date).sort((a,b)=>String(a.date).localeCompare(String(b.date))).slice(0,4);document.getElementById('dashEvents').innerHTML=e.map(x=>`<div class="mini-row"><span class="dot"></span><div><strong>${esc(x.title)}</strong><small>${esc(formatDateTime(x.date))}</small></div></div>`).join('')||'<div class="empty">Nothing scheduled.</div>';const days=Array.from({length:12},(_,i)=>{const d=new Date();d.setDate(d.getDate()-(11-i));const k=keyDate(d);return (db.activity||[]).filter(a=>keyDate(new Date(a.at))===k).length});const mx=Math.max(1,...days);document.getElementById('activityChart').innerHTML=days.map(v=>`<span class="bar" title="${v} events" style="height:${20+(v/mx)*135}px"></span>`).join('');document.getElementById('activityCount').textContent=db.activity.length+' events';document.getElementById('focusText').textContent=db.tasks.find(x=>!x.done)?.title||'Choose one important thing and move it forward today.'}
+function render(){renderDashboard();renderNotes();renderTasks();renderProjects();renderLinks();renderFiles();renderEvents();renderHabits();renderGoals();renderJournal();renderCalendar();renderActivity()}
+function tick(){const d=new Date(),h=d.getHours();document.getElementById('greeting').textContent=h<5?'Late night':h<12?'Morning':h<17?'Afternoon':h<21?'Evening':'Night';document.getElementById('time').textContent=d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});document.getElementById('date').textContent=d.toLocaleDateString([], {weekday:'long',day:'numeric',month:'long',year:'numeric'})}setInterval(tick,1000);tick()
+function globalSearch(){const q=searchTerm();if(q){const pages=[['notes',db.notes],['tasks',db.tasks],['projects',db.projects],['links',db.links],['files',db.files],['habits',db.habits],['goals',db.goals],['journal',db.journal],['calendar',db.events]];const hit=pages.find(p=>p[1].some(match));if(hit&&currentPage==='dashboard')showPage(hit[0])}render()}
+function exportData(){const blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='roman-personal-os-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500);toast('Backup exported ✓')}
+function importData(e){const f=e.target.files?.[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const x=JSON.parse(r.result);db={...blank(),...x,settings:{...blank().settings,...(x.settings||{})}};save();applySettings();render();toast('Backup restored ✓')}catch(_){toast('Invalid backup file')}};r.readAsText(f);e.target.value=''}
+function setPin(){const p=prompt('Set a 4–6 digit PIN. Leave empty to remove PIN.','');if(p===null)return;if(p&&!/^\d{4,6}$/.test(p))return toast('PIN must be 4–6 digits');db.settings.pin=p;save();toast(p?'PIN enabled':'PIN removed')}
+function lockNow(){if(!db.settings.pin)return toast('Set a PIN first');document.getElementById('lock').classList.add('show');document.getElementById('pinIn').value='';setTimeout(()=>document.getElementById('pinIn').focus(),100)}
+function unlock(){if(document.getElementById('pinIn').value===db.settings.pin){document.getElementById('lock').classList.remove('show');document.getElementById('pinErr').textContent=''}else document.getElementById('pinErr').textContent='Incorrect PIN'}
+function clearAll(){if(!confirm('Delete ALL Roman Personal OS data? Export a backup first if you may need it later.'))return;db=blank();save();render();toast('All data cleared')}
+function askAssistant(){const a=(document.getElementById('ask').value||'').toLowerCase(),box=document.getElementById('answer');if(a.includes('task'))box.innerHTML=`You have <b>${db.tasks.filter(x=>!x.done).length}</b> open tasks.`;else if(a.includes('note'))box.innerHTML=`You have <b>${db.notes.length}</b> notes.`;else if(a.includes('project'))box.innerHTML=`You have <b>${db.projects.length}</b> projects.`;else if(a.includes('link'))box.innerHTML=`You have <b>${db.links.length}</b> saved links.`;else if(a.includes('habit'))box.innerHTML=`You have <b>${db.habits.length}</b> habits.`;else if(a.includes('goal'))box.innerHTML=`You have <b>${db.goals.length}</b> active goals.`;else if(a.includes('upcoming')||a.includes('calendar')||a.includes('reminder'))box.innerHTML=`You have <b>${db.events.length}</b> saved reminders.`;else box.textContent='I can answer workspace counts and quick status questions offline. More AI capabilities can be connected later.'}
+function openCommand(){document.getElementById('command').classList.add('show');document.getElementById('commandInput').value='';renderCommands();setTimeout(()=>document.getElementById('commandInput').focus(),50)}function closeCommand(){document.getElementById('command').classList.remove('show')}
+function renderCommands(){const q=(document.getElementById('commandInput').value||'').toLowerCase();const cmds=[['Go to Dashboard','dashboard','⌂'],['Open Notes','notes','📝'],['Open Tasks','tasks','✓'],['Open Projects','projects','🚀'],['Open Calendar','calendar','📅'],['Open Habits','habits','🔥'],['Open Goals','goals','🎯'],['Open Journal','journal','📖'],['Open Settings','settings','⚙'],['New Note','new-note','＋'],['New Task','new-task','＋'],['New Reminder','new-event','＋'],['Backup','backup','⇩']].filter(x=>x[0].toLowerCase().includes(q));document.getElementById('commands').innerHTML=cmds.map(c=>`<button onclick="runCommand('${c[1]}')">${c[2]} &nbsp; ${c[0]}</button>`).join('')||'<div class="empty">No command found.</div>'}
+function runCommand(c){closeCommand();if(c==='backup')exportData();else if(c.startsWith('new-'))openForm(c.slice(4));else showPage(c)}
+document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();openCommand()}if(e.key==='Escape'){closeCommand();if(document.getElementById('modal').classList.contains('show'))closeModal()}});
+// Android/mobile: a focused search field must not keep the keyboard open while navigating or using quick actions.
+document.addEventListener('pointerdown',e=>{const t=e.target;if(!t||t.closest('#modal'))return;if(t.closest('button,a,.nav,.mobilebar,.quick-grid,.section-head')){const f=document.activeElement;if(f&&/^(INPUT|TEXTAREA|SELECT)$/.test(f.tagName))f.blur()}},{capture:true});
+function syncKeyboardState(){if(!window.visualViewport)return;const open=(window.innerHeight-window.visualViewport.height)>150;document.body.classList.toggle('keyboard-open',open);document.documentElement.style.setProperty('--vvh',window.visualViewport.height+'px')}
+/* ===== V7 keyboard controller: handles Android keyboards that overlay the layout viewport ===== */
+(function(){
+  const vv=window.visualViewport, modal=document.getElementById('modal');
+  let raf=0, timer=0;
+  const vh=()=>Math.max(240,Math.round(vv?vv.height:window.innerHeight));
+  const kb=()=>!!vv && ((window.innerHeight-vv.height)>120 || vv.offsetTop>20);
+  function focusSafe(){
+    clearTimeout(timer);
+    timer=setTimeout(()=>{
+      const f=document.activeElement, d=modal?.querySelector('.dialog');
+      if(!f||!d||!modal.classList.contains('show')||!['INPUT','TEXTAREA','SELECT'].includes(f.tagName))return;
+      const r=f.getBoundingClientRect(), H=vh(), top=65, bottom=H-65;
+      if(r.top<top||r.bottom>bottom){
+        d.scrollTo({top:Math.max(0,d.scrollTop+(r.top-(H/2-r.height/2))),behavior:'smooth'});
+      }
+    },80);
+  }
+  function apply(){
+    cancelAnimationFrame(raf);
+    raf=requestAnimationFrame(()=>{
+      const H=vh(), open=modal?.classList.contains('show'), visible=kb();
+      document.documentElement.style.setProperty('--vvh',H+'px');
+      document.documentElement.classList.toggle('keyboard-open',visible);
+      document.body.classList.toggle('keyboard-open',visible);
+      if(modal){
+        modal.classList.toggle('keyboard-open',open);
+        if(open){
+          modal.style.height=H+'px';
+          modal.style.maxHeight=H+'px';
+          modal.style.setProperty('--vvh',H+'px');
+        }else{
+          modal.style.removeProperty('height');
+          modal.style.removeProperty('max-height');
+          modal.style.removeProperty('--vvh');
+        }
+      }
+      if(open&&visible)focusSafe();
+    });
+  }
+  const burst=()=>{apply();setTimeout(apply,80);setTimeout(apply,220);setTimeout(apply,450)};
+  vv?.addEventListener('resize',burst,{passive:true});
+  vv?.addEventListener('scroll',burst,{passive:true});
+  window.addEventListener('resize',burst,{passive:true});
+  window.addEventListener('orientationchange',()=>setTimeout(burst,250),{passive:true});
+  document.addEventListener('focusin',e=>{if(modal?.contains(e.target))burst()},true);
+  document.addEventListener('focusout',()=>setTimeout(apply,180),true);
+  const oldOpen=window.openForm;
+  window.openForm=function(){oldOpen.apply(this,arguments);setTimeout(burst,60);setTimeout(focusSafe,220)};
+  const oldClose=window.closeModal;
+  window.closeModal=function(){oldClose.apply(this,arguments);document.documentElement.classList.remove('keyboard-open');document.body.classList.remove('keyboard-open');modal?.classList.remove('keyboard-open');modal?.style.removeProperty('height');modal?.style.removeProperty('max-height');modal?.style.removeProperty('--vvh')};
+  apply();
+})();
+
+setInterval(()=>{const now=Date.now();db.events.forEach(x=>{if(x.notify&&!x._notified&&x.date&&new Date(x.date).getTime()<=now){x._notified=true;save();if('Notification' in window&&Notification.permission==='granted')new Notification('Roman Personal OS',{body:x.title});else toast('Reminder: '+x.title)}})},30000);
+
+/* ===== v6: keyboard-safe visual viewport controller ===== */
+(function(){
+  const vv = window.visualViewport;
+  const root = document.documentElement;
+  const body = document.body;
+  let focusTimer = 0;
+  let lastVVH = 0;
+
+  function setViewportVars(){
+    if(!vv) return;
+    const h = Math.max(1, vv.height);
+    const top = Math.max(0, vv.offsetTop || 0);
+    const keyboard = (window.innerHeight - h) > 120;
+    root.style.setProperty('--vvh', h + 'px');
+    root.style.setProperty('--vvo', top + 'px');
+    root.style.setProperty('--vvw', vv.width + 'px');
+    body.classList.toggle('keyboard-open', keyboard);
+    lastVVH = h;
+
+    const modal = document.getElementById('modal');
+    if(modal && modal.classList.contains('show')){
+      modal.style.top = top + 'px';
+      modal.style.height = h + 'px';
+      modal.style.bottom = 'auto';
+      const dialog = modal.querySelector('.dialog');
+      if(dialog){
+        dialog.style.maxHeight = Math.max(120, h - (keyboard ? 4 : 10)) + 'px';
+        if(keyboard && document.activeElement && /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName)){
+          ensureFocusedFieldVisible(document.activeElement, true);
+        }
+      }
+    }
+  }
+
+  function ensureFocusedFieldVisible(el, afterKeyboard){
+    if(!el) return;
+    const dialog = el.closest('.dialog');
+    if(!dialog) return;
+    clearTimeout(focusTimer);
+    focusTimer = setTimeout(function(){
+      const viewportHeight = vv ? vv.height : window.innerHeight;
+      const viewportTop = vv ? (vv.offsetTop || 0) : 0;
+      const r = el.getBoundingClientRect();
+      const padTop = 76;
+      const padBottom = afterKeyboard ? 190 : 110;
+      let delta = 0;
+
+      if(r.bottom > viewportTop + viewportHeight - padBottom){
+        delta = r.bottom - (viewportTop + viewportHeight - padBottom);
+      } else if(r.top < viewportTop + padTop){
+        delta = r.top - (viewportTop + padTop);
+      }
+      if(Math.abs(delta) > 2){
+        dialog.scrollTop += delta;
+      } else {
+        // A second pass after Android finishes its keyboard animation.
+        if(afterKeyboard){
+          setTimeout(function(){ ensureFocusedFieldVisible(el, false); }, 140);
+        }
+      }
+    }, afterKeyboard ? 80 : 30);
+  }
+
+  if(vv){
+    setViewportVars();
+    vv.addEventListener('resize', setViewportVars, {passive:true});
+    vv.addEventListener('scroll', setViewportVars, {passive:true});
+  }
+  window.addEventListener('resize', setViewportVars, {passive:true});
+  window.addEventListener('orientationchange', function(){setTimeout(setViewportVars,250);}, {passive:true});
+
+  document.addEventListener('focusin', function(e){
+    const el=e.target;
+    if(!/^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName)) return;
+    requestAnimationFrame(function(){ ensureFocusedFieldVisible(el, false); });
+    setTimeout(function(){ ensureFocusedFieldVisible(el, true); }, 250);
+    setTimeout(setViewportVars, 350);
+  }, true);
+
+  document.addEventListener('focusout', function(){
+    setTimeout(setViewportVars, 180);
+  }, true);
+
+  // Keep modal dimensions correct while the keyboard is animating.
+  setInterval(function(){
+    if(document.getElementById('modal')?.classList.contains('show') && vv && vv.height !== lastVVH){
+      setViewportVars();
+    }
+  }, 250);
+})();
+
+applySettings();render();showPage(db.settings.startPage||'dashboard');if(db.settings.pin)document.getElementById('lock').classList.add('show');
+
+let deviceData=null;
+async function refreshDevice(){
+ try{const r=await fetch('/api/device',{cache:'no-store'});if(!r.ok)throw new Error('API unavailable');deviceData=await r.json();renderDevice();toast('Device data refreshed ✓')}catch(e){toast('Device API not available — run the included server.');renderDeviceEmpty()}}
+function renderDeviceEmpty(){['devOnline','devBattery','devNotifs','devCalls','devSms','devTime'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent='—'});const inf=document.getElementById('devInfo');if(inf)inf.innerHTML='<div class="empty">No device sync received yet.</div>';['devLocation','devNotifList','devCallList','devSmsList'].forEach(id=>{const e=document.getElementById(id);if(e)e.innerHTML='<div class="empty">No data yet.</div>'})}
+function renderDevice(){if(!deviceData){renderDeviceEmpty();return}const d=deviceData;const ago=d.timestamp?timeAgo(d.timestamp):'—';document.getElementById('devOnline').textContent=ago;document.getElementById('devBattery').textContent=(d.battery??'—')+(d.battery!=null?'%':'');document.getElementById('devNotifs').textContent=(d.notifications||[]).length;document.getElementById('devCalls').textContent=(d.calls||[]).length;document.getElementById('devSms').textContent=(d.sms||[]).length;document.getElementById('devTime').textContent=d.timestamp?new Date(d.timestamp).toLocaleString():'—';document.getElementById('devInfo').innerHTML=`<div class="mini-row"><span class="dot"></span><div><strong>${esc(d.device||'Unknown device')}</strong><small>Android ${esc(d.android||'—')} • SDK ${esc(d.sdk||'—')}</small></div></div><div class="mini-row"><span class="dot"></span><div><strong>Usage access</strong><small>${d.usageAccess?'Enabled':'Not enabled'}</small></div></div>`;document.getElementById('devLocation').innerHTML=d.location?`<div style="font-size:12px;line-height:1.7">${esc(d.location)}<br><a class="primary" style="display:inline-block;margin-top:10px;padding:8px 10px" target="_blank" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(d.location)}">Open map</a></div>`:'No location received.';const ns=(d.notifications||[]).slice(-8).reverse();document.getElementById('devNotifList').innerHTML=ns.length?ns.map(n=>`<div class="item"><div class="item-main"><h3>🔔 ${esc(n.title||n.app||'Notification')}</h3><p>${esc(n.text||'')}</p><div class="meta"><span class="tag">${esc(n.app||'')}</span><span class="tag">${n.time?new Date(n.time).toLocaleString():''}</span></div></div></div>`).join(''):'<div class="empty">No notifications.</div>';const cs=(d.calls||[]).slice(0,8);document.getElementById('devCallList').innerHTML=cs.length?cs.map(c=>`<div class="item"><div class="item-main"><h3>📞 ${esc(c.number||'Unknown')}</h3><p>Type ${esc(String(c.type||''))} • ${esc(String(c.duration||0))} sec</p><div class="meta"><span class="tag">${c.date?new Date(c.date).toLocaleString():''}</span></div></div></div>`).join(''):'<div class="empty">No calls.</div>';const ss=(d.sms||[]).slice(0,8);document.getElementById('devSmsList').innerHTML=ss.length?ss.map(x=>`<div class="item"><div class="item-main"><h3>💬 ${esc(x.address||'SMS')}</h3><p>${esc(x.body||'')}</p><div class="meta"><span class="tag">${x.date?new Date(x.date).toLocaleString():''}</span><span class="tag">Type ${esc(String(x.type||''))}</span></div></div></div>`).join(''):'<div class="empty">No SMS.</div>';document.getElementById('devPerms').innerHTML=`<span class="tag">Notifications: ${(d.notifications||[]).length?'active/synced':'none'}</span><span class="tag">Usage: ${d.usageAccess?'enabled':'disabled'}</span><span class="tag">Location: ${d.location?'synced':'not available'}</span>`}
+function timeAgo(t){const m=Math.max(0,Math.floor((Date.now()-t)/60000));if(m<1)return'Online now';if(m<60)return m+'m ago';const h=Math.floor(m/60);if(h<24)return h+'h ago';return Math.floor(h/24)+'d ago'}
+function deviceHelp(){alert('1) Start the included server.\n2) Put its /api/device-sync URL and the same token into the Android app.\n3) Grant Android permissions and Notification Access.\n4) Tap SYNC NOW.\n5) Open this website through the same server to see My Phone.') }
+
+</script>
+
+<script id="roman-settings-final">
+(function(){
+  const D={theme:"dark",accent:"#7957ff",compact:false,motion:true,autosave:true,confirmDelete:true,startPage:"dashboard",sound:true,dailyCheckin:false,privacyMode:false,largeText:false};
+  const S=()=>db.settings=Object.assign({},D,db.settings||{});
+  window.applySettings=function(){
+    const s=S();
+    document.body.classList.toggle("light",s.theme==="light");
+    document.body.classList.toggle("compact-ui",!!s.compact);
+    document.body.classList.toggle("no-motion",s.motion===false);
+    document.body.classList.toggle("large-text",!!s.largeText);
+    document.body.classList.toggle("privacy-ui",!!s.privacyMode);
+    document.documentElement.style.setProperty("--accent",s.accent||D.accent);
+    const a=document.getElementById("accentSelect");if(a)a.value=s.accent;
+    const p=document.getElementById("startPageSelect");if(p)p.value=s.startPage;
+    const m={compactToggle:"compact",motionToggle:"motion",autosaveToggle:"autosave",confirmToggle:"confirmDelete",soundToggle:"sound",checkinToggle:"dailyCheckin",privacyToggle:"privacyMode",textToggle:"largeText"};
+    Object.entries(m).forEach(([id,k])=>{const e=document.getElementById(id);if(e){e.classList.toggle("on",!!s[k]);e.setAttribute("aria-pressed",String(!!s[k]));}});
+  };
+  window.setSetting=function(k,v){const s=S();if(!(k in s))return;s[k]=v;applySettings();save();toast("Setting updated ✓");};
+  window.toggleSetting=function(k){const s=S();if(!(k in s))return;s[k]=!s[k];applySettings();save();toast(s[k]?"Enabled ✓":"Disabled");};
+  window.toggleTheme=function(){const s=S();s.theme=s.theme==="dark"?"light":"dark";applySettings();save();toast("Theme updated ✓");};
+  window.setAccent=function(v){S().accent=v||D.accent;applySettings();save();toast("Accent updated ✓");};
+  window.requestNotifications=async function(){
+    if(!("Notification" in window))return toast("Notifications are not supported here");
+    if(Notification.permission==="denied")return toast("Notifications are blocked in browser settings");
+    try{const p=await Notification.requestPermission();toast(p==="granted"?"Notifications enabled ✓":"Permission not granted");}catch(e){toast("Could not enable notifications");}
+  };
+  window.resetPreferences=function(){const pin=S().pin||"";db.settings=Object.assign({},D,{pin});applySettings();save();render();toast("Preferences reset ✓");};
+  const st=document.createElement("style");st.textContent=".compact-ui .card{padding:14px}.compact-ui .item{padding:11px}.no-motion *{animation-duration:.001ms!important;transition-duration:.001ms!important;scroll-behavior:auto!important}.large-text .setting-row strong{font-size:14px}.large-text .setting-row span{font-size:12px}.privacy-ui .mini-row small,.privacy-ui #dashNotes small,.privacy-ui #dashTasks small,.privacy-ui #dashEvents small{filter:blur(5px);user-select:none}";document.head.appendChild(st);
+  S();setTimeout(applySettings,0);
+})();
+</script>
+</body>
+</html>
