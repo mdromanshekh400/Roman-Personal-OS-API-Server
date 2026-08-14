@@ -306,14 +306,9 @@ app.post(
       online:
         true,
 
-
-
-      lastSync:
-        Date.now()
-        
-      lastSync:
-        Date.now(),
-
+timestamp: Date.now(),
+  lastSync: Date.now()
+      
     };
 
 
