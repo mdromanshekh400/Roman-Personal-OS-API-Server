@@ -216,26 +216,45 @@ body.keyboard-open .mobilebar{display:none!important}
 </style>
 
 <style>
-:root{--roman-glass:rgba(255,255,255,.08);}
-.card,.panel,.box{
- backdrop-filter:blur(12px);
- border-radius:18px;
- transition:.25s ease;
+/* Roman Personal OS Premium UI Layer */
+body{
+  scroll-behavior:smooth;
 }
-.card:hover,.panel:hover,.box:hover{
- transform:translateY(-3px);
+.card,.panel,.box,.stat-card{
+  backdrop-filter:blur(16px);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:22px;
+  transition:.3s ease;
+}
+.card:hover,.panel:hover,.box:hover,.stat-card:hover{
+  transform:translateY(-5px);
+}
+button{
+  transition:.25s ease;
+}
+button:hover{
+  transform:scale(1.03);
 }
 </style>
+
 <script>
+/* 12 hour time formatter */
 (function(){
- function romanClock(){
-  const e=document.getElementById("roman-clock");
-  if(e)e.textContent=new Date().toLocaleTimeString([],{
-   hour:"2-digit",minute:"2-digit",hour12:true
-  });
+ function updateTime(){
+   const selectors=["#clock","#time","#currentTime",".time"];
+   selectors.forEach(s=>{
+     const el=document.querySelector(s);
+     if(el){
+       el.textContent=new Date().toLocaleTimeString([],{
+         hour:"2-digit",
+         minute:"2-digit",
+         hour12:true
+       });
+     }
+   });
  }
- setInterval(romanClock,1000);
- romanClock();
+ setInterval(updateTime,1000);
+ updateTime();
 })();
 </script>
 
@@ -675,75 +694,5 @@ function deviceHelp(){alert('1) Start the included server.\n2) Put its /api/devi
   S();setTimeout(applySettings,0);
 })();
 </script>
-
-<script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
-<script>
-// Roman Personal OS realtime connection
-(function(){
-  const SOCKET_SERVER_URL = "https://roman-personal-os-api-server.onrender.com";
-  try{
-    const socket = io(SOCKET_SERVER_URL,{transports:["websocket","polling"]});
-    socket.on("connect",()=>console.log("Socket.IO connected",socket.id));
-    socket.on("device-update",(device)=>{
-      console.log("Live device update",device);
-      window.romanDevice=device;
-      window.dispatchEvent(new CustomEvent("roman-device-update",{detail:device}));
-    });
-    socket.on("disconnect",()=>console.log("Socket.IO disconnected"));
-  }catch(e){console.error("Socket error",e);}
-})();
-</script>
-
-<script id="roman-realtime-enhancements">
-(function(){
-  let lastDevice=null;
-  const style=document.createElement('style');
-  style.textContent=`.battery-live{animation:pulseBattery .8s ease}.online-live{color:#19c37d;font-weight:700}.offline-live{color:#ff5b5b;font-weight:700}.rt-badge{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;border-radius:50%;background:#ff4d6d;color:#fff;font-size:12px;margin-left:6px}@keyframes pulseBattery{50%{transform:scale(1.12)}}`;
-  document.head.appendChild(style);
-
-  function popup(title,text){
-    if(Notification.permission==='granted') new Notification(title,{body:text});
-    if(typeof toast==='function') toast(title+' '+text);
-  }
-
-  window.addEventListener('roman-device-update',e=>{
-    const d=e.detail||{};
-    const old=lastDevice;
-    lastDevice=d;
-
-    if(old && d.battery!==old.battery){
-      const el=document.getElementById('devBattery');
-      if(el){el.classList.add('battery-live');setTimeout(()=>el.classList.remove('battery-live'),900);}
-    }
-
-    if(old){
-      if((d.notifications||[]).length>(old.notifications||[]).length){
-        const n=d.notifications[d.notifications.length-1]||{};
-        popup('🔔 New notification', n.title||n.text||'New notification received');
-      }
-      if((d.calls||[]).length>(old.calls||[]).length) popup('📞 New call','A new call was received');
-      if((d.sms||[]).length>(old.sms||[]).length) popup('💬 New SMS','A new message was received');
-    }
-
-    const online=document.getElementById('devOnline');
-    if(online){online.classList.add('online-live');}
-
-    renderDevice();
-  });
-
-  setInterval(()=>{
-    if(window.romanDevice){
-      const age=Date.now()-window.romanDevice.lastSync;
-      const el=document.getElementById('devOnline');
-      if(el && age>120000){
-        el.classList.remove('online-live');
-        el.classList.add('offline-live');
-        el.textContent='Offline';
-      }
-    }
-  },10000);
-})();
-</script>
-
 </body>
 </html>
