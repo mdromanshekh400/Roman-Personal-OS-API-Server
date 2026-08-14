@@ -431,7 +431,7 @@ __dirname,
 // FALLBACK
 
 app.get(
-"/*",
+"/{*splat}",
 (req,res)=>{
 
 
