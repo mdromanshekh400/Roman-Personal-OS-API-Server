@@ -651,21 +651,21 @@ function deviceHelp(){alert('1) Start the included server.\n2) Put its /api/devi
 })();
 </script>
 
-<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
 <script>
-(() => {
+// Roman Personal OS realtime connection
+(function(){
   const SOCKET_SERVER_URL = "https://roman-personal-os-api-server.onrender.com";
-  try {
-    const socket = io(SOCKET_SERVER_URL, { transports: ["websocket", "polling"] });
-    socket.on("connect", () => console.log("Socket.IO connected", socket.id));
-    socket.on("connect_error", e => console.log("Socket error", e.message));
-    socket.on("device-update", (data) => {
-      console.log("device-update", data);
-      window.latestDeviceUpdate = data;
-      if (typeof refreshDevice === "function") refreshDevice();
-      if (typeof render === "function") render();
+  try{
+    const socket = io(SOCKET_SERVER_URL,{transports:["websocket","polling"]});
+    socket.on("connect",()=>console.log("Socket.IO connected",socket.id));
+    socket.on("device-update",(device)=>{
+      console.log("Live device update",device);
+      window.romanDevice=device;
+      window.dispatchEvent(new CustomEvent("roman-device-update",{detail:device}));
     });
-  } catch(e) { console.log(e); }
+    socket.on("disconnect",()=>console.log("Socket.IO disconnected"));
+  }catch(e){console.error("Socket error",e);}
 })();
 </script>
 </body>
