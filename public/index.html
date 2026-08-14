@@ -668,5 +668,57 @@ function deviceHelp(){alert('1) Start the included server.\n2) Put its /api/devi
   }catch(e){console.error("Socket error",e);}
 })();
 </script>
+
+<script id="roman-realtime-enhancements">
+(function(){
+  let lastDevice=null;
+  const style=document.createElement('style');
+  style.textContent=`.battery-live{animation:pulseBattery .8s ease}.online-live{color:#19c37d;font-weight:700}.offline-live{color:#ff5b5b;font-weight:700}.rt-badge{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;border-radius:50%;background:#ff4d6d;color:#fff;font-size:12px;margin-left:6px}@keyframes pulseBattery{50%{transform:scale(1.12)}}`;
+  document.head.appendChild(style);
+
+  function popup(title,text){
+    if(Notification.permission==='granted') new Notification(title,{body:text});
+    if(typeof toast==='function') toast(title+' '+text);
+  }
+
+  window.addEventListener('roman-device-update',e=>{
+    const d=e.detail||{};
+    const old=lastDevice;
+    lastDevice=d;
+
+    if(old && d.battery!==old.battery){
+      const el=document.getElementById('devBattery');
+      if(el){el.classList.add('battery-live');setTimeout(()=>el.classList.remove('battery-live'),900);}
+    }
+
+    if(old){
+      if((d.notifications||[]).length>(old.notifications||[]).length){
+        const n=d.notifications[d.notifications.length-1]||{};
+        popup('🔔 New notification', n.title||n.text||'New notification received');
+      }
+      if((d.calls||[]).length>(old.calls||[]).length) popup('📞 New call','A new call was received');
+      if((d.sms||[]).length>(old.sms||[]).length) popup('💬 New SMS','A new message was received');
+    }
+
+    const online=document.getElementById('devOnline');
+    if(online){online.classList.add('online-live');}
+
+    renderDevice();
+  });
+
+  setInterval(()=>{
+    if(window.romanDevice){
+      const age=Date.now()-window.romanDevice.lastSync;
+      const el=document.getElementById('devOnline');
+      if(el && age>120000){
+        el.classList.remove('online-live');
+        el.classList.add('offline-live');
+        el.textContent='Offline';
+      }
+    }
+  },10000);
+})();
+</script>
+
 </body>
 </html>
