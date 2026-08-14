@@ -214,6 +214,31 @@ body.keyboard-open .mobilebar{display:none!important}
 }
 
 </style>
+
+<style>
+:root{--roman-glass:rgba(255,255,255,.08);}
+.card,.panel,.box{
+ backdrop-filter:blur(12px);
+ border-radius:18px;
+ transition:.25s ease;
+}
+.card:hover,.panel:hover,.box:hover{
+ transform:translateY(-3px);
+}
+</style>
+<script>
+(function(){
+ function romanClock(){
+  const e=document.getElementById("roman-clock");
+  if(e)e.textContent=new Date().toLocaleTimeString([],{
+   hour:"2-digit",minute:"2-digit",hour12:true
+  });
+ }
+ setInterval(romanClock,1000);
+ romanClock();
+})();
+</script>
+
 </head>
 <body>
 <div id="lock" class="lock"><div class="lockbox"><div class="brandmark" style="margin:0 auto 14px">R</div><h2>Roman Personal OS</h2><p style="color:var(--muted);font-size:12px">Enter your PIN to unlock your private workspace.</p><input id="pinIn" maxlength="6" inputmode="numeric" type="password" placeholder="••••"><button class="primary" style="width:100%;margin-top:12px" onclick="unlock()">Unlock</button><p id="pinErr" style="color:var(--danger);font-size:11px"></p></div></div>
