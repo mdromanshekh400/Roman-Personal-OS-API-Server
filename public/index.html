@@ -650,5 +650,23 @@ function deviceHelp(){alert('1) Start the included server.\n2) Put its /api/devi
   S();setTimeout(applySettings,0);
 })();
 </script>
+
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<script>
+(() => {
+  const SOCKET_SERVER_URL = "https://roman-personal-os-api-server.onrender.com";
+  try {
+    const socket = io(SOCKET_SERVER_URL, { transports: ["websocket", "polling"] });
+    socket.on("connect", () => console.log("Socket.IO connected", socket.id));
+    socket.on("connect_error", e => console.log("Socket error", e.message));
+    socket.on("device-update", (data) => {
+      console.log("device-update", data);
+      window.latestDeviceUpdate = data;
+      if (typeof refreshDevice === "function") refreshDevice();
+      if (typeof render === "function") render();
+    });
+  } catch(e) { console.log(e); }
+})();
+</script>
 </body>
 </html>
