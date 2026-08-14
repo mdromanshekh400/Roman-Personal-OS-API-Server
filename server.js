@@ -310,6 +310,9 @@ app.post(
 
       lastSync:
         Date.now()
+        
+      lastSync:
+        Date.now(),
 
     };
 
